@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using savingsTacker.Data;
+using savingsTacker.Data.Repositories.DbRepositories;
+using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,13 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+//To connect the Repositories and IRepositories
+builder.Services.AddTransient<ISavingsRepository, SavingsRepository>();
+builder.Services.AddTransient<IGroupDetailsRepository, GroupDetailsRepository>();
+builder.Services.AddTransient<IGroupMembersRepository, GroupMembersRepository>();
+builder.Services.AddTransient<IGroupSavingsRepository, GroupSavingsRepository>();
+builder.Services.AddTransient<IActivityLogRepository, ActivityLogRepository>();
 
 var app = builder.Build();
 

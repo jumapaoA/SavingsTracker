@@ -1,0 +1,51 @@
+Savings TABLE
+int Id NOT NULL
+decimal amount NOT NULL
+string userId NOT NULL
+DATETIME dateContributed NOT NULL
+bit isActive NOT NULL
+
+
+
+GroupDetails TABLE
+int Id NOT NULL
+string groupName NOT NULL
+string groupDescription NOT NULL
+
+
+
+GroupMembers TABLE
+int groupId NOT NULL
+string userId NOT NULL
+
+
+
+GroupSavings TABLE
+int groupId NOT NULL
+int savingsId NOT NULL
+
+
+
+Users TABLE
+string userId NOT NULL
+string firstName NOT NULL
+string lastName NOT NULL
+string email NOT NULL
+string username NOT NULL
+strign password NOT NULL
+string numberType
+string contactNumber
+string addressString
+string addressBarangay
+string addressProvince
+string addressCity
+string profilePicURL
+DATETIME accountCreated NOT NULL
+bit isActive NOT NULL 
+
+
+
+Activity LOG
+string userId NOT NULL
+string message NOT NULL
+DATETIME dateAccess NOT NULL
