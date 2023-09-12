@@ -9,7 +9,7 @@ namespace savingsTacker.Controllers
 {
     [ApiController]
     [Authorize]
-    public class UserController
+    public class UserController : Controller
     {
         private readonly ApplicationDbContext _DbContext;
         private readonly IGroupMembersRepository _GroupMember;
@@ -25,7 +25,7 @@ namespace savingsTacker.Controllers
         #region Getters that Returns an ApplicationUser Type
 
         [HttpGet]
-        [Route("api/[controller]/")]
+        [Route("./api/[controller]/")]
         public IEnumerable<ApplicationUser> GetAllUser()
         {
             return _DbContext.Users;

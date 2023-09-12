@@ -11,7 +11,7 @@ namespace savingsTacker.Controllers
 {
     [ApiController]
     [Authorize]
-    public class SavingsController
+    public class SavingsController : Controller
     {
         public readonly ApplicationDbContext _DbContext;
         public readonly IGroupSavingsRepository _GroupSavings;
