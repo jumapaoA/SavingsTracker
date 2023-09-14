@@ -13,7 +13,7 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
 
-import { FetchUserById } from '../axios/fetch-api';
+import { FetchUserById, FetchUsers, FetchUserBySavingsId } from '../axios/fetch-api';
 
 function Copyright(props) {
     return (
@@ -30,7 +30,9 @@ function Copyright(props) {
 
 export default function Dashboard() {
 
-    FetchUserById('cbdfa256-61b9-40f6-82c3-4894efeb04b9');
+    FetchUserById('e26c72a9-0b0b-4cd7-866b-ddb98b2db4f8');
+    FetchUsers();
+    FetchUserBySavingsId('1');
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>

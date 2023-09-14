@@ -34,10 +34,13 @@ namespace savingsTacker.Data.Repositories.DbRepositories
         {
             var SavingsContributor = GetSavingsById(savingsId);
 
-            var UserOwner = _DbContext.Users.ToList().FirstOrDefault(User => User.Id == SavingsContributor.UserId);
+            if (SavingsContributor != null)
+            {
+                var UserOwner = _DbContext.Users.ToList().FirstOrDefault(User => User.Id == SavingsContributor.UserId);
 
-
-            return UserOwner;
+                return UserOwner;
+            }
+            return new ApplicationUser();
         }
 
         public void AddSaving(Saving saving)

@@ -12,6 +12,8 @@ namespace savingsTacker.Models
         [PersonalData]
         public string Password { get; set; } = "";
         [PersonalData]
+        public string Gender { get; set; } = "";
+        [PersonalData]
         public string NumberType { get; set; } = "";
         [PersonalData]
         public string ContactNumber { get; set; } = "";

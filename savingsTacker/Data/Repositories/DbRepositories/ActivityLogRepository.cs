@@ -18,6 +18,11 @@ namespace savingsTacker.Data.Repositories.DbRepositories
             return _DbContext.Set<ActivityLog>().Where(activity => activity.UserId == userId);
         }
 
+        public ActivityLog? GetActivityById(int activityId)
+        {
+            return _DbContext.Set<ActivityLog>().FirstOrDefault(activity => activity.Id == activityId);
+        }
+
         public void AddActivity(ActivityLog activity)
         {
             _DbContext.Set<ActivityLog>().Add(activity);

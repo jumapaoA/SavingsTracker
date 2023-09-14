@@ -27,9 +27,17 @@ namespace savingsTacker.Data.Repositories.DbRepositories
             return members;
         }
 
-        public IEnumerable<GroupMember> GetGroupsByUserId(string userId)
+        public IEnumerable<GroupDetails> GetGroupsByUserId(string userId)
         {
-            return _DbContext.Set<GroupMember>().Where(group => group.UserId == userId);
+            var UserGroups = _DbContext.Set<GroupMember>().Where(group => group.UserId == userId);
+            var Groups = new List<GroupDetails>();
+
+            foreach(var Group in UserGroups)
+            {
+                var Result = _DbContext.Set<GroupDetails>().FirstOrDefault(GroupDetail => GroupDetail.Id == Group.GroupId);
+            }
+
+            return Groups;
         }
 
         public ApplicationUser? GetGroupAdminByGroupId(int groupId)
@@ -38,6 +46,11 @@ namespace savingsTacker.Data.Repositories.DbRepositories
                 .FirstOrDefault(group => group.GroupId == groupId && group.IsAdmin == true );
 
             return _DbContext.Set<ApplicationUser>().FirstOrDefault(user=> user.Id == groupAdmin.UserId);
+        }
+
+        public GroupMember? GetMemberById(int groupMember)
+        {
+            return _DbContext.Set<GroupMember>().FirstOrDefault(Member => Member.Id  == groupMember);
         }
 
         public void AddGroupMember(GroupMember member)

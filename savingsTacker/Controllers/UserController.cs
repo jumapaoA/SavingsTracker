@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using savingsTacker.Data;
 using savingsTacker.Data.Repositories.DbRepositories;
@@ -8,54 +9,65 @@ using savingsTacker.Models;
 namespace savingsTacker.Controllers
 {
     [ApiController]
-    [Authorize]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
+        private readonly ILogger<ApplicationUser> _Logger;
         private readonly ApplicationDbContext _DbContext;
         private readonly IGroupMembersRepository _GroupMember;
         private readonly ISavingsRepository _Savings;
+        private readonly UserManager<ApplicationUser> _UserManager;
+        private string _UploadsFolder;
 
-        public UserController(ApplicationDbContext dbContext, IGroupMembersRepository groupMembers, SavingsRepository savings)
+        public UserController(ILogger<ApplicationUser> logger, ApplicationDbContext dbContext, IGroupMembersRepository groupMembers, ISavingsRepository savings, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
+            _Logger = logger;
             _DbContext = dbContext;
             _GroupMember = groupMembers;
             _Savings = savings;
+            _UserManager = userManager;
+            _UploadsFolder = configuration.GetValue<String>("UploadsFolder");
         }
 
         #region Getters that Returns an ApplicationUser Type
 
         [HttpGet]
-        [Route("./api/[controller]/")]
+        [Route("[controller]")]
         public IEnumerable<ApplicationUser> GetAllUser()
         {
-            return _DbContext.Users;
+            _Logger.LogInformation("Inside the GetAllUser method.");
+
+            var Users = _DbContext.Users.ToList();
+
+            return Users;
         }
 
         [HttpGet]
-        [Route("api/[controller]/{userId:guid}")]
+        [Route("[controller]/{userId:guid}")]
         public ApplicationUser GetUserById(string userId)
         {
-            var Result = _DbContext.Users.ToList().FirstOrDefault(User => User.Id == userId);
+            _Logger.LogInformation("Inside the GetUserById method.");
+
+            var Result = _DbContext.Users.ToList().FirstOrDefault(User => User.Id.Equals(userId));
 
             return Result;
         }
 
         [HttpGet]
-        [Route("api/[controller]/userSaving/{savingId:int}")]
+        [Route("[controller]/userSaving/{savingId:int}")]
         public ApplicationUser? GetUserBySavingId(int savingId)
         {
             return _Savings.GetUserBySavingsId(savingId);
         }
 
         [HttpGet]
-        [Route("api/[controller]/groupMembers/{groupId:int}")]
+        [Route("[controller]/groupMembers/{groupId:int}")]
         public IEnumerable<ApplicationUser> GetMembersByGroup(int groupId)
         {
             return _GroupMember.GetMembersByGroupId(groupId);
         }
 
         [HttpGet]
-        [Route("api/[controller]/groupAdmin/{groupId:int}")]
+        [Route("[controller]/groupAdmin/{groupId:int}")]
         public ApplicationUser? GetGroupAdminByGroupId(int groupId)
         {
             return _GroupMember.GetGroupAdminByGroupId(groupId);
@@ -63,5 +75,80 @@ namespace savingsTacker.Controllers
 
         #endregion
 
-    }
+        #region Updating/Removing User's Data
+        [HttpPatch]
+        [Route("[controller]/update-profile/{userId:guid}")]
+        public async Task<ActionResult> UpdateProfile(string userId)
+        {
+            var User = await _UserManager.FindByIdAsync(userId);
+
+            if (User == null)
+            {
+                return NotFound();
+            }
+
+            User.FirstName = Request.Form["FirstName"].ToString();
+            User.LastName = Request.Form["LastName"].ToString();
+            User.Gender = Request.Form["Gender"].ToString();
+            User.NumberType = Request.Form["NumberType"].ToString();
+            User.ContactNumber = Request.Form["ContactNumber"].ToString();
+            User.AddressStreet = Request.Form["AddressStreet"].ToString();
+            User.AddressBarangay = Request.Form["AddressBarangay"].ToString();
+            User.AddressProvince = Request.Form["AddressProvince"].ToString();
+            User.AddressCity = Request.Form["AddressCity"].ToString();
+
+            await _UserManager.UpdateAsync(User);
+            _Logger.LogInformation($"User {User.FirstName} details has been updated.");
+
+            return Ok(User);
+        }
+
+        [HttpPatch]
+        [Route("[controller]/update-status/{userId:guid}")]
+        public async Task<ActionResult> UpdateStatus(string userId)
+        {
+            var User = await _UserManager.FindByIdAsync(userId);
+
+            if (User == null)
+            {
+                return NotFound();
+            }
+
+            User.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());            
+            await _UserManager.UpdateAsync(User);
+            _Logger.LogInformation($"User {User.FirstName} status has been updated to {User.IsActive}.");
+
+            return Ok(User);
+        }
+
+        [HttpPost]
+        [Route("api/[controller]/upload/profile-picture/{userId:guid}")]
+        public async Task<ActionResult> SaveProfilePicture(string userId)
+        {
+            var User = await _UserManager.FindByIdAsync(userId);
+            if(User == null)
+            {
+                return NotFound();
+            }
+
+            var File = Request.Form.Files.GetFile("ProfilePicture");
+            var Extension = Path.GetExtension(File.FileName);
+            var Filename = $"{userId}{Extension}";
+            var FileUrl = $"/uploads/{Filename}";
+
+
+            var filePath = Path.Combine(_UploadsFolder + "profile-pics/", Filename);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await File.CopyToAsync(stream).ConfigureAwait(false);
+            }
+
+            User.ProfilePicURL = FileUrl;
+
+            var result = await _UserManager.UpdateAsync(User);
+            _Logger.LogInformation($"User {User.FirstName} profile pic has been updated.");
+            return Ok(User);
+        }
+    #endregion
+}
 }

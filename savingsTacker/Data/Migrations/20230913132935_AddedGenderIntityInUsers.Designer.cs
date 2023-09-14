@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using savingsTacker.Data;
 
@@ -11,9 +12,11 @@ using savingsTacker.Data;
 namespace savingsTacker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230913132935_AddedGenderIntityInUsers")]
+    partial class AddedGenderIntityInUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -534,17 +537,10 @@ namespace savingsTacker.Data.Migrations
                     b.Property<DateTime>("DateContributed")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateUpdated")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserUpdated")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

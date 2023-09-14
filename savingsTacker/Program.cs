@@ -6,6 +6,7 @@ using savingsTacker.Data;
 using savingsTacker.Data.Repositories.DbRepositories;
 using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,12 +30,19 @@ builder.Services.AddAuthentication()
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-//To connect the Repositories and IRepositories
+//To connect the Repositories and IRepositoriesbuilder.Services.AddScoped<IGroupMembersRepository, GroupMembersRepository>();
 builder.Services.AddTransient<ISavingsRepository, SavingsRepository>();
 builder.Services.AddTransient<IGroupDetailsRepository, GroupDetailsRepository>();
 builder.Services.AddTransient<IGroupMembersRepository, GroupMembersRepository>();
 builder.Services.AddTransient<IGroupSavingsRepository, GroupSavingsRepository>();
 builder.Services.AddTransient<IActivityLogRepository, ActivityLogRepository>();
+
+
+// SWAGGER FOR BACKEND DOCUMENTATION
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });   
+});
 
 var app = builder.Build();
 
@@ -42,6 +50,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
+    });
 }
 else
 {
@@ -57,11 +70,14 @@ app.UseAuthentication();
 app.UseIdentityServer();
 app.UseAuthorization();
 
+app.UseCors();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
-app.MapFallbackToFile("index.html"); ;
+app.MapFallbackToFile("index.html");
 
 app.Run();

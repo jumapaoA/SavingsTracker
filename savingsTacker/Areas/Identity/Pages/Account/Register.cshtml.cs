@@ -46,54 +46,43 @@ namespace savingsTacker.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string ReturnUrl { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
+            [Required(ErrorMessage = "First name is required")]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [DataType(DataType.Text)]
+            [Display(Name = "FirstName")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "Last name is required")]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [DataType(DataType.Text)]
+            [Display(Name = "LastName")]
+            public string LastName { get; set; }
+
+            [Required(ErrorMessage = "Email is required")]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required(ErrorMessage = "Gender is required")]
+            [Display(Name = "Gender")]
+            public string Gender { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required]
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
@@ -111,12 +100,27 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            _logger.LogInformation("ModelState.IsValid is " + ModelState.IsValid);
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
+                _logger.LogInformation("Inside ModelState.IsValid");
+
+                if(Input == null)
+                    _logger.LogInformation("Inside Input == null");
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                _logger.LogInformation("Before adding other entities");
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.Gender = Input.Gender;
+                user.IsActive = true;
+
+                _logger.LogInformation("After adding other entities");
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
