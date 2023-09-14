@@ -95,25 +95,7 @@ namespace savingsTacker.Controllers
             _Savings.AddSaving(Savings);
             _Logger.LogInformation($"Savings with ID {NewSavingsId} has been listed.");
 
-            int NewActivityId = Random.Next(0, 1000);
-            var Activity = _ActivityLog.GetActivityById(NewActivityId);
-
-            while (Activity != null)
-            {
-                NewActivityId = Random.Next(0, 1000);
-                Activity = _ActivityLog.GetActivityById(NewActivityId);
-            }
-
-            Activity = new ActivityLog()
-            {
-                Id = NewActivityId,
-                UserId = Request.Form["UserId"].ToString(),
-                Message = $"Added savings with an ID of {NewSavingsId}",
-                DateAccess = currentDate
-            };
-
-            _ActivityLog.AddActivity(Activity);
-            _Logger.LogInformation($"Activity with ID {NewActivityId} has been listed.");
+            AddActivity($"Added new savings with an ID of {NewSavingsId}");
 
             return Ok(User);
         }
@@ -139,8 +121,37 @@ namespace savingsTacker.Controllers
             Saving.Amount = decimal.Parse(Request.Form["Amount"].ToString());
             Saving.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());
 
+            _Savings.UpdateSavings(Saving);
+
+            AddActivity($"Updated savings with an ID of {savingId}");
             return Ok(Saving);
         }
         #endregion
+
+        public ActivityLog AddActivity(string message)
+        {
+            Random Random = new Random();
+            int NewActivityId = Random.Next(0, 1000);
+            var Activity = _ActivityLog.GetActivityById(NewActivityId);
+
+            while (Activity != null)
+            {
+                NewActivityId = Random.Next(0, 1000);
+                Activity = _ActivityLog.GetActivityById(NewActivityId);
+            }
+
+            Activity = new ActivityLog()
+            {
+                Id = NewActivityId,
+                UserId = Request.Form["UserId"].ToString(),
+                Message = message,
+                DateAccess = DateTime.Now
+            };
+
+            _ActivityLog.AddActivity(Activity);
+            _Logger.LogInformation($"Activity with ID {NewActivityId} has been listed.");
+
+            return Activity;
+        }
     }
 }

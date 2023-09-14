@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper.Execution;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using savingsTacker.Data;
@@ -15,15 +16,17 @@ namespace savingsTacker.Controllers
         private readonly ApplicationDbContext _DbContext;
         private readonly IGroupMembersRepository _GroupMember;
         private readonly ISavingsRepository _Savings;
+        private readonly IActivityLogRepository _ActivityLog;
         private readonly UserManager<ApplicationUser> _UserManager;
         private string _UploadsFolder;
 
-        public UserController(ILogger<ApplicationUser> logger, ApplicationDbContext dbContext, IGroupMembersRepository groupMembers, ISavingsRepository savings, UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public UserController(ILogger<ApplicationUser> logger, ApplicationDbContext dbContext, IGroupMembersRepository groupMembers, ISavingsRepository savings, IActivityLogRepository activityLog, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _Logger = logger;
             _DbContext = dbContext;
             _GroupMember = groupMembers;
             _Savings = savings;
+            _ActivityLog = activityLog;
             _UserManager = userManager;
             _UploadsFolder = configuration.GetValue<String>("UploadsFolder");
         }
@@ -100,6 +103,8 @@ namespace savingsTacker.Controllers
             await _UserManager.UpdateAsync(User);
             _Logger.LogInformation($"User {User.FirstName} details has been updated.");
 
+            AddActivity($"Updated profile details");
+
             return Ok(User);
         }
 
@@ -117,6 +122,8 @@ namespace savingsTacker.Controllers
             User.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());            
             await _UserManager.UpdateAsync(User);
             _Logger.LogInformation($"User {User.FirstName} status has been updated to {User.IsActive}.");
+
+            AddActivity($"Updated profile picture status");
 
             return Ok(User);
         }
@@ -147,8 +154,37 @@ namespace savingsTacker.Controllers
 
             var result = await _UserManager.UpdateAsync(User);
             _Logger.LogInformation($"User {User.FirstName} profile pic has been updated.");
+
+            AddActivity($"Updated profile picture");
+
             return Ok(User);
         }
-    #endregion
-}
+        #endregion
+
+        public ActivityLog AddActivity(string message)
+        {
+            Random Random = new Random();
+            int NewActivityId = Random.Next(0, 1000);
+            var Activity = _ActivityLog.GetActivityById(NewActivityId);
+
+            while (Activity != null)
+            {
+                NewActivityId = Random.Next(0, 1000);
+                Activity = _ActivityLog.GetActivityById(NewActivityId);
+            }
+
+            Activity = new ActivityLog()
+            {
+                Id = NewActivityId,
+                UserId = Request.Form["UserId"].ToString(),
+                Message = message,
+                DateAccess = DateTime.Now
+            };
+
+            _ActivityLog.AddActivity(Activity);
+            _Logger.LogInformation($"Activity with ID {NewActivityId} has been listed.");
+
+            return Activity;
+        }
+    }
 }

@@ -3,11 +3,7 @@
 
 export async function FetchUserById(id) {
     const response = await axios.get(`/user/${id}`);
-    //const response = await axios.get(`/user/userSaving/1`);
      
-    console.log("Hi");
-    //console.log(axios.isCancel('something'));
-
     if (response.status === 200) {
         console.log(response.data);
         return response.data;

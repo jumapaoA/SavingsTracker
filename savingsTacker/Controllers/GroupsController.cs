@@ -5,6 +5,7 @@ using savingsTacker.Data;
 using savingsTacker.Data.Repositories.DbRepositories;
 using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
+using System.Text.RegularExpressions;
 
 namespace savingsTacker.Controllers
 {
@@ -17,8 +18,9 @@ namespace savingsTacker.Controllers
         private readonly IGroupDetailsRepository _GroupDetails;
         private readonly IGroupSavingsRepository _GroupSavings;
         private readonly ISavingsRepository _Savings;
+        private readonly IActivityLogRepository _ActivityLog;
 
-        public GroupsController(ILogger<GroupDetails> logger, ApplicationDbContext dbContext, IGroupMembersRepository groupMembers, IGroupDetailsRepository groupDetails, IGroupSavingsRepository groupSavings, ISavingsRepository savings)
+        public GroupsController(ILogger<GroupDetails> logger, ApplicationDbContext dbContext, IGroupMembersRepository groupMembers, IGroupDetailsRepository groupDetails, IGroupSavingsRepository groupSavings, ISavingsRepository savings, IActivityLogRepository activityLog)
         {
             _Logger = logger;
             _DbContext = dbContext;
@@ -26,6 +28,7 @@ namespace savingsTacker.Controllers
             _GroupDetails = groupDetails;
             _GroupSavings = groupSavings;
             _Savings = savings;
+            _ActivityLog = activityLog;
         }
 
         #region Getters for Group Details
@@ -82,6 +85,7 @@ namespace savingsTacker.Controllers
         #endregion
 
         #region Create Data for Group Savings
+
         [HttpPost]
         [Route("[controller]/create")]
         public IActionResult CreateGroup()
@@ -108,6 +112,8 @@ namespace savingsTacker.Controllers
 
             _GroupDetails.AddGroup(Group);
             _Logger.LogInformation($"Savings with ID {NewGroupId} has been listed.");
+
+            AddActivity($"Added new group with an ID of {NewGroupId}");
 
             return Ok(Group);
         }
@@ -145,6 +151,8 @@ namespace savingsTacker.Controllers
 
             _GroupMember.AddGroupMember(Member);
             _Logger.LogInformation($"Member with ID {NewMemberId} has been listed.");
+
+            AddActivity($"Added new member to the group with an ID of {NewMemberId}");
 
             return Ok(Member);
         }
@@ -206,11 +214,15 @@ namespace savingsTacker.Controllers
             _GroupSavings.AddGroupSaving(GroupSaving, Savings);
             _Logger.LogInformation($"Member with ID {NewGroupSavingId} has been listed.");
 
+            AddActivity($"Added new group savings with an ID of {NewGroupSavingId}");
+
             return Ok(GroupSaving);
         }
+
         #endregion
 
         #region Updating/Removing User's Data
+
         [HttpPatch]
         [Route("[controller]/update/{groupId:int}")]
         public IActionResult UpdateGroup(int groupId)
@@ -231,6 +243,8 @@ namespace savingsTacker.Controllers
             _GroupDetails.UpdateGroupDetails(Group);
             _Logger.LogInformation($"Group with ID {groupId} has been listed.");
 
+            AddActivity($"Updated the group details with an ID of {groupId}");
+
             return Ok(Group);
         }
 
@@ -248,6 +262,8 @@ namespace savingsTacker.Controllers
 
             _GroupMember.UpdateGroupMember(Member);
             _Logger.LogInformation($"Member with ID {memberId} has been updated.");
+
+            AddActivity($"Updated the group admin with an ID of {memberId}");
 
             return Ok(Member);
         }
@@ -267,6 +283,8 @@ namespace savingsTacker.Controllers
 
             _GroupMember.UpdateGroupMember(Member);
             _Logger.LogInformation($"Member with ID {memberId} has been updated.");
+
+            AddActivity($"Updated the group member status with an ID of {memberId}");
 
             return Ok(Member);
         }
@@ -331,5 +349,31 @@ namespace savingsTacker.Controllers
         //    return Ok(GroupSaving);
         //}
         #endregion
+
+        public ActivityLog AddActivity(string message)
+        {
+            Random Random = new Random();
+            int NewActivityId = Random.Next(0, 1000);
+            var Activity = _ActivityLog.GetActivityById(NewActivityId);
+
+            while (Activity != null)
+            {
+                NewActivityId = Random.Next(0, 1000);
+                Activity = _ActivityLog.GetActivityById(NewActivityId);
+            }
+
+            Activity = new ActivityLog()
+            {
+                Id = NewActivityId,
+                UserId = Request.Form["UserId"].ToString(),
+                Message = message,
+                DateAccess = DateTime.Now
+            };
+
+            _ActivityLog.AddActivity(Activity);
+            _Logger.LogInformation($"Activity with ID {NewActivityId} has been listed.");
+
+            return Activity;
+        }
     }
 }
