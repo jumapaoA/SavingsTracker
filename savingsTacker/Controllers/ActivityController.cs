@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace savingsTacker.Controllers
 {
-    [ApiController]
+    [Controller]
     public class ActivityController : ControllerBase
     {
         public readonly IActivityLogRepository _ActivityLog;

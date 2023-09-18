@@ -9,7 +9,7 @@ using savingsTacker.Models;
 
 namespace savingsTacker.Controllers
 {
-    [ApiController]
+    [Controller]
     public class UserController : ControllerBase
     {
         private readonly ILogger<ApplicationUser> _Logger;
@@ -56,21 +56,21 @@ namespace savingsTacker.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/userSaving/{savingId:int}")]
+        [Route("[controller]/user-saving/{savingId:int}")]
         public ApplicationUser? GetUserBySavingId(int savingId)
         {
             return _Savings.GetUserBySavingsId(savingId);
         }
 
         [HttpGet]
-        [Route("[controller]/groupMembers/{groupId:int}")]
+        [Route("[controller]/group-members/{groupId:int}")]
         public IEnumerable<ApplicationUser> GetMembersByGroup(int groupId)
         {
             return _GroupMember.GetMembersByGroupId(groupId);
         }
 
         [HttpGet]
-        [Route("[controller]/groupAdmin/{groupId:int}")]
+        [Route("[controller]/group-admin/{groupId:int}")]
         public ApplicationUser? GetGroupAdminByGroupId(int groupId)
         {
             return _GroupMember.GetGroupAdminByGroupId(groupId);

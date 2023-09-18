@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace savingsTacker.Controllers
 {
-    [ApiController]
+    [Controller]
     public class GroupsController : ControllerBase
     {
         private readonly ILogger<GroupDetails> _Logger;
@@ -62,7 +62,7 @@ namespace savingsTacker.Controllers
 
         [HttpGet]
         [Route("[controller]/user/{userId:guid}")]
-        public IEnumerable<GroupDetails> GetUserById(string userId)
+        public IEnumerable<GroupDetails> GetGroupsByUserId(string userId)
         {
             var Groups = _GroupMember.GetGroupsByUserId(userId);
 
@@ -71,15 +71,10 @@ namespace savingsTacker.Controllers
 
         [HttpGet]
         [Route("[controller]/savings/{groupId:int}")]
-        public IActionResult GetGroupSaving(int groupId) 
+        public GroupSaving GetGroupSaving(int groupId) 
         {
             var Result = _GroupSavings.GetGroupSavingsById(groupId);
-            if(Result == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(Result);
+            return Result;
         }
 
         #endregion
@@ -126,6 +121,14 @@ namespace savingsTacker.Controllers
             if(Group == null)
             {
                 return NotFound();
+            }
+
+            var Members = _GroupMember.GetMembersByGroupId(Group.Id);
+
+            foreach (var User in Members)
+            {
+                if (User.Id.Equals(Request.Form["UserId"].ToString()))
+                    return NotFound("Already a member.");
             }
 
             DateTime currentDate = DateTime.Now;
@@ -289,65 +292,6 @@ namespace savingsTacker.Controllers
             return Ok(Member);
         }
 
-        //[HttpPatch]
-        //[Route("[controller]/update-saving/{groupId:int}")]
-        //public IActionResult UpdateGroupSavings(int groupId)
-        //{
-        //    var Group = _GroupDetails.GetGroupDetailById(groupId);
-        //    if (Group == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    Random Random = new Random();
-
-        //    #region Create new savings under a group
-        //    DateTime currentDate = DateTime.Now;
-        //    int NewSavingsId = Random.Next(0, 1000);
-        //    var Savings = _Savings.GetSavingsById(NewSavingsId);
-
-        //    while (Savings != null)
-        //    {
-        //        NewSavingsId = Random.Next(0, 1000);
-        //        Savings = _Savings.GetSavingsById(NewSavingsId);
-        //    }
-
-        //    Savings = new Saving()
-        //    {
-        //        Id = NewSavingsId,
-        //        Amount = decimal.Parse(Request.Form["Amount"].ToString()),
-        //        UserId = Request.Form["UserId"].ToString(),
-        //        DateContributed = currentDate,
-        //        IsActive = true
-        //    };
-
-        //    _Savings.AddSaving(Savings);
-        //    _Logger.LogInformation($"Savings with ID {NewSavingsId} has been listed.");
-        //    #endregion
-
-        //    #region Create new group savings data
-        //    int NewGroupSavingId = Random.Next(0, 1000);
-        //    var GroupSaving = _GroupSavings.GetGroupSavingsById(NewGroupSavingId);
-
-        //    while (GroupSaving != null)
-        //    {
-        //        NewGroupSavingId = Random.Next(0, 1000);
-        //        GroupSaving = _GroupSavings.GetGroupSavingsById(NewGroupSavingId);
-        //    }
-
-        //    GroupSaving = new GroupSaving()
-        //    {
-        //        Id = NewGroupSavingId,
-        //        GroupId = groupId,
-        //        SavingsId = Convert.ToInt32(Request.Form["UserId"].ToString())
-        //    };
-        //    #endregion
-
-        //    _GroupSavings.AddGroupSaving(GroupSaving, Savings);
-        //    _Logger.LogInformation($"Member with ID {NewGroupSavingId} has been listed.");
-
-        //    return Ok(GroupSaving);
-        //}
         #endregion
 
         public ActivityLog AddActivity(string message)

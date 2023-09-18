@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace savingsTacker.Controllers
 {
-    [ApiController]
+    [Controller]
     public class SavingsController : ControllerBase
     {
         public readonly ILogger<Saving> _Logger;
@@ -58,7 +58,7 @@ namespace savingsTacker.Controllers
         }
 
         [HttpGet]
-        [Route("[controller]/savingsInGroup/{userId:guid}")]
+        [Route("[controller]/group-savings/{userId:guid}")]
         public IEnumerable<Saving> GetAllGroupSavingsByUserId(string userId)
         {
             return _GroupSavings.GetAllGroupSavingsByUserId(userId);

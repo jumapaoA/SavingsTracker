@@ -13,7 +13,12 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import Orders from './Orders';
 
-import { FetchUserById, FetchUsers, FetchUserBySavingsId } from '../axios/fetch-api';
+import {
+    FetchUsers, FetchUserById, FetchUserBySavingsId, FetchMembersByGroupId, UpdateUserProfile, UpdateUserStatus,
+    UpdateUserProfilePicture, FetchSavings, FetchSavingsByUserId, FetchSavingsBySavingId, FetchSavingsByGroupId,
+    FetchGroupSavingsByUserId, CreateSaving, UpdateSavings, FetchGroups, FetchGroupDetailByGroupId, FetchGroupsByUserId,
+    FetchGroupSavingsById, CreateGroup, CreateGroupMember, CreateGroupSavings, UpdateGroup, UpdateAdminMember,
+    UpdateMemberStatus, FetchActivityLog } from '../axios/fetch-api';
 
 function Copyright(props) {
     return (
@@ -28,11 +33,43 @@ function Copyright(props) {
     );
 }
 
+function testAPICall() {
+    const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
+    const intIDs = 1;
+
+    FetchUsers();
+    FetchUserById(userId);
+    FetchUserBySavingsId(intIDs);
+    FetchMembersByGroupId(intIDs);
+    //UpdateUserProfile(userId);
+    //UpdateUserStatus(userId);
+    //UpdateUserProfilePicture(userId);
+
+    FetchSavings();
+    FetchSavingsByUserId(userId);
+    FetchSavingsBySavingId(intIDs);
+    FetchSavingsByGroupId(intIDs);
+    FetchGroupSavingsByUserId(userId);
+    //CreateSaving();
+    ///UpdateSavings(intIDs);
+
+    FetchGroups();
+    FetchGroupDetailByGroupId(intIDs);
+    FetchGroupsByUserId(userId);
+    FetchGroupSavingsById(intIDs);
+    //CreateGroup();
+    //CreateGroupMember(userId);
+    //CreateGroupSavings(userId);
+   // UpdateGroup(userId);
+    //UpdateAdminMember(userId);
+    //UpdateMemberStatus(userId);
+
+    FetchActivityLog(userId);
+}
+
 export default function Dashboard() {
 
-    FetchUserById('e26c72a9-0b0b-4cd7-866b-ddb98b2db4f8');
-    FetchUsers();
-    FetchUserBySavingsId('1');
+    testAPICall();
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
