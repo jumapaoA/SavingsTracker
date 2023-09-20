@@ -29,12 +29,14 @@ namespace savingsTacker.Data.Repositories.DbRepositories
 
         public IEnumerable<GroupDetails> GetGroupsByUserId(string userId)
         {
-            var UserGroups = _DbContext.Set<GroupMember>().Where(group => group.UserId == userId);
+            var UserGroups = _DbContext.Set<GroupMember>().Where(group => group.UserId.Equals(userId));
             var Groups = new List<GroupDetails>();
 
             foreach(var Group in UserGroups)
             {
                 var Result = _DbContext.Set<GroupDetails>().FirstOrDefault(GroupDetail => GroupDetail.Id == Group.GroupId);
+                if (Result != null)
+                    Groups.Add(Result);
             }
 
             return Groups;

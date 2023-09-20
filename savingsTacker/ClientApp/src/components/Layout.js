@@ -14,7 +14,7 @@ export function Layout({ children }) {
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
                 <NavMenu/>
-                <Box style={{ marginTop: '75px', marginLeft: '20px' }}>
+                <Box style={{ marginTop: '75px', marginLeft: '20px', flex: 1, marginRight: '20px' }}>
                     {children}
                 </Box>
             </Box>

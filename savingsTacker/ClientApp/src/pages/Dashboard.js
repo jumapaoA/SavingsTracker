@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState} from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import Chart from './Chart';
 import Deposits from './Deposits';
-import Orders from './Orders';
+import { SavingsTable } from './Savings';
 
 import {
     FetchUsers, FetchUserById, FetchUserBySavingsId, FetchMembersByGroupId, UpdateUserProfile, UpdateUserStatus,
@@ -68,8 +68,15 @@ function testAPICall() {
 }
 
 export default function Dashboard() {
+    const [rows, setRows] = useState([]);
 
-    testAPICall();
+    useEffect(() => {
+
+        testAPICall();
+
+        FetchSavingsByUserId("a0cf219d-6bdb-444f-8013-76a7fd4c4fa1")
+            .then(response => setRows(response));
+    }, []);
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -100,10 +107,10 @@ export default function Dashboard() {
                         <Deposits />
                     </Paper>
                 </Grid>
-                {/* Recent Orders */}
+                {/* Recent Savings */}
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                        <Orders />
+                        <SavingsTable rows={ rows} />
                     </Paper>
                 </Grid>
             </Grid>

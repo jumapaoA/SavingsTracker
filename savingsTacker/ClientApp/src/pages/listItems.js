@@ -17,17 +17,17 @@ export const mainListItems = (
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
         </ListItemButton>
-        <ListItemButton href='/orders'>
+        <ListItemButton href='/saving'>
             <ListItemIcon>
                 <SavingsIcon />
             </ListItemIcon>
             <ListItemText primary="Savings" />
         </ListItemButton>
-        <ListItemButton href='/customers'>
+        <ListItemButton href='/contributor'>
             <ListItemIcon>
                 <PeopleIcon />
             </ListItemIcon>
-            <ListItemText primary="Contributor" />
+            <ListItemText primary="Groups" />
         </ListItemButton>
         <ListItemButton>
             <ListItemIcon>

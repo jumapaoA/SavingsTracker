@@ -1,0 +1,5 @@
+INSERT INTO GroupDetails (GroupName,GroupDescription,DateCreated,IsActive) 
+VALUES('A&J Savings', 'This is for 2025 goals', '2023-09-18 15:43:33', 1);
+
+INSERT INTO GroupMembers (GroupId,UserId,IsAdmin,DateAdded, DateRemoved, IsActive) 
+VALUES(1, 'a0cf219d-6bdb-444f-8013-76a7fd4c4fa1',0, '2023-09-15 14:35:33', '0001-01-01T00:00:00.0000000', 1);

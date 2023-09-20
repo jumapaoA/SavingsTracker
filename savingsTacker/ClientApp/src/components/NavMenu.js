@@ -12,7 +12,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { LoginMenu } from './api-authorization/LoginMenu';
-
 import { mainListItems, secondaryListItems } from '../pages/listItems';
 
 const drawerWidth = 240;
@@ -66,35 +65,16 @@ export default function MavMenu({ children }) {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
+    
     return (
         <>
             <AppBar position="absolute" open={open}>
-                <Toolbar
-                    sx={{
-                        pr: '24px', // keep right padding when drawer closed
-                    }}
-                >
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={toggleDrawer}
-                        sx={{
-                            marginRight: '36px',
-                            ...(open && { display: 'none' }),
-                        }}
-                    >
+                <Toolbar sx={{ pr: '24px', }} >
+                    <IconButton edge="start" color="inherit" aria-label="open drawer" onClick={toggleDrawer} sx={{ marginRight: '36px', ...(open && { display: 'none' }), }} >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
-                        component="h1"
-                        variant="h6"
-                        color="inherit"
-                        noWrap
-                        sx={{ flexGrow: 1 }}
-                    >
-                        Dashboard
+                    <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }} >
+                        <a href="/" style={{ color: 'white', textDecoration:'none' }}>Savings Tracker</a>
                     </Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">
@@ -105,6 +85,7 @@ export default function MavMenu({ children }) {
                     </LoginMenu>
                 </Toolbar>
             </AppBar>
+
             <Drawer variant="permanent" open={open}>
                 <Toolbar
                     sx={{
@@ -128,3 +109,46 @@ export default function MavMenu({ children }) {
         </>
     );
 }
+
+
+//return (
+        //    <>
+        //        {/* logo & toggler button */}
+        //        <Box
+        //            sx={{
+        //                width: 228,
+        //                display: 'flex',
+        //                [theme.breakpoints.down('md')]: {
+        //                    width: 'auto'
+        //                }
+        //            }}
+        //        >
+        //            <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+        //                <NotificationsIcon />
+        //            </Box>
+        //            <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
+        //                <Avatar
+        //                    variant="rounded"
+        //                    sx={{
+        //                        ...theme.typography.commonAvatar,
+        //                        ...theme.typography.mediumAvatar,
+        //                        transition: 'all .2s ease-in-out',
+        //                        background: theme.palette.secondary.light,
+        //                        color: theme.palette.secondary.dark,
+        //                        '&:hover': {
+        //                            background: theme.palette.secondary.dark,
+        //                            color: theme.palette.secondary.light
+        //                        }
+        //                    }}
+        //                    onClick={handleLeftDrawerToggle}
+        //                    color="inherit"
+        //                >
+        //                    <ChevronLeftIcon stroke={1.5} size="1.3rem" />
+        //                </Avatar>
+        //            </ButtonBase>
+        //        </Box>
+
+        //        {/* header search */}
+
+        //    </>
+        //);

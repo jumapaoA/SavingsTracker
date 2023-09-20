@@ -1,12 +1,12 @@
 import Dashboard from './pages/Dashboard';
 import ApiAuthorzationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
-import Counter from "./components/Counter";
+import Contributor from "./components/Contributor";
 import { FetchData } from "./components/FetchData";
 import Home from "./components/Home";
 
 import Chart from './pages/Chart';
 import Deposits from './pages/Deposits';
-import Orders from './pages/Orders';
+import Savings from './pages/Savings';
 
 const AppRoutes = [
     {
@@ -14,12 +14,12 @@ const AppRoutes = [
         element: <Dashboard />
     },
     {
-        path: '/orders',
-        element: <Orders />
+        path: '/saving',
+        element: <Savings />
     },
     {
-        path: '/counter',
-        element: <Counter />
+        path: '/contributor',
+        element: <Contributor />
     },
     {
         path: '/fetch-data',
