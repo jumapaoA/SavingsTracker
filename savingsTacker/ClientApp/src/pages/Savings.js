@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import { Container } from 'reactstrap';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -9,31 +8,70 @@ import Autocomplete from '@mui/material/Autocomplete';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Box from '@mui/material/Box';
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
+import { FetchSavingsByUserId, FetchUsers, FetchSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving } from '../axios/fetch-api';
 
-import { FetchSavingsByUserId, FetchGroupsByUserId, FetchUserById } from '../axios/fetch-api';
+const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
+//const userId = "ab8ebde1-5431-42e0-9db0-ba001529ca1f";
 
 export default function Orders() {
-    const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
     const [savings, setSavings] = useState([]);
+    const [dataRow, setDataRow] = useState([]);
     const [groups, setGroups] = useState([]);
+    const [addIsClick, setAddIsClick] = useState(false);
+    const [selectedGroup, setSelectedGroup] = React.useState([]);
 
     useEffect(() => {
         FetchSavingsByUserId(userId)
-            .then(response => setSavings(response));
+            .then(response => {
+                setSavings(response);
+                setDataRow(response);
+            });
 
         FetchGroupsByUserId(userId).then(response => setGroups(response));
     }, []);
 
-    //VARIABLES AND FUNCTION FOR GROUP DROP DOWN BOX
-    const [selectedGroup, setSelectedGroup] = React.useState([]);
+    useEffect(() => {
+        if (selectedGroup) {
+            const id = selectedGroup.id;
+            if (id) {
+                FetchSavingsByGroupId(id)
+                    .then((response) => {
+                        console.log(response);
+                        setDataRow(response);
+                    });
+            }
+            else {
+                setDataRow(savings);
+            }
+        }
+        else
+            setDataRow(savings);
+    }, [selectedGroup]);
+
+    function onOpenAddForm() {
+        setAddIsClick(true);
+    }
+
+    function onCloseAddForm() {
+        setAddIsClick(false);
+    }
+
+    function onGroupChange(newValue) {
+        if (newValue) {
+            const selectedGroupObject = groups.find(group => group.groupName === newValue);
+            setSelectedGroup(selectedGroupObject);
+        }
+        else {
+            setSelectedGroup([]);
+        }
+    }
 
     return (
         <div>
@@ -50,9 +88,10 @@ export default function Orders() {
                             <h4>₱0.00</h4>
                         </div>
                         <div style={{ marginLeft: 'auto', marginRight: '3px' }} >
-                            <IconButton aria-label="add savings" color="primary" title="Add Savings" style={{ top: '-15px' }} >
+                            <IconButton aria-label="add savings" onClick={() => onOpenAddForm()} color="primary" title="Add Savings" style={{ top: '-15px' }} >
                                 <AddCircleOutlineIcon sx={{ fontSize: 30 }} />
                             </IconButton>
+                            {addIsClick && <AddDialog open={addIsClick} setOpen={()=>onCloseAddForm()} />}
                         </div>
                     </Paper>
                 </div>
@@ -80,9 +119,10 @@ export default function Orders() {
                             <div style={{ flex: '5%' }} />
                             <div style={{ flex: '35%' }}>
                                 <Autocomplete
-                                    value={selectedGroup}
+                                    value={selectedGroup.groupName}
                                     onChange={(event, newValue) => {
-                                        setSelectedGroup(newValue);
+
+                                        onGroupChange(newValue);
                                     }}
                                     id="controllable-states-demo"
                                     options={groups.map(group => group.groupName)}
@@ -90,7 +130,7 @@ export default function Orders() {
                                 />
                             </div>
                         </div>
-                        <SavingsTable rows={savings} />
+                        <SavingsTable rows={dataRow} />
                     </Container>
                 </div>
             </div>
@@ -99,19 +139,14 @@ export default function Orders() {
 }
 
 export function SavingsTable({ rows }) {
-    const [userContributor, setUserContributor] = useState('');
-    const [userUpdated, setUserUpdated] = useState('');
-    const [formattedAddedDate, setFormattedAddedDate] = useState("");
-    const [formattedUpdatedDate, setFormattedUpdatedDate] = useState("");
+    const [users, setUsers] = useState([]);
     const defaultDate = 'February 1, 1';
     const columns = [
         {
             field: 'userId', headerName: 'Contributor', width: 200,
             valueGetter: (params) => {
                 const userId = params.row.userId;
-                console.log(userId);
-                getUsername(userId, true);
-                return userContributor;
+                return getUsername(userId);
             },
         },
         { field: 'amount', headerName: 'Amount', type: 'number', width: 100 },
@@ -119,7 +154,7 @@ export function SavingsTable({ rows }) {
             field: 'dateContributed', headerName: 'Date Contributed', width: 200,
             valueGetter: (params) => {
                 const date = params.row.dateContributed;
-                formatDate(date, true);
+                const formattedAddedDate = formatDate(date, true);
                 return formattedAddedDate === defaultDate ? '': formattedAddedDate;
             },
         },
@@ -127,16 +162,14 @@ export function SavingsTable({ rows }) {
             field: 'updatedBy', headerName: 'Updated By', width: 200,
             valueGetter: (params) => {
                 const userId = params.row.updatedBy;
-                console.log(userId);
-                getUsername(userId, false);
-                return userUpdated;
+                return getUsername(userId);
             },
         },
         {
             field: 'dateUpdated', headerName: 'Date Updated', width: 200,
             valueGetter: (params) => {
                 const date = params.row.dateUpdated;
-                formatDate(date, false);
+                const formattedUpdatedDate =  formatDate(date);
                 return formattedUpdatedDate === defaultDate ? '' : formattedUpdatedDate;
             },
         },
@@ -149,34 +182,46 @@ export function SavingsTable({ rows }) {
         },
     ];
 
-    function getUsername(userId, isContributor) {
+    useEffect(() => {
+        FetchUsers().then((response) => {
+            setUsers(response);
+        });
+    }, []);
+
+    function getUsername(userId) {
         if (!userId) {
-            console.log('here');
             return;
         }
-
-        FetchUserById(userId)
-            .then(response => {
-                isContributor ? setUserContributor(`${response.firstName} ${response.lastName}`) :
-                    setUserUpdated(`${response.firstName} ${response.lastName}`);
-            });
+        const foundUser = users.find(user => user.id === userId);
+        return foundUser? `${foundUser.firstName} ${foundUser.lastName}`: '';
     }
 
-    function formatDate(dateString, isAdded) {
+    function formatDate(dateString) {
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
         const date = new Date(dateString);
         const mm = months[date.getMonth() + 1];
         const dd = date.getDate();
         const yyyy = date.getFullYear();
+        const stringDate = `${mm} ${dd}, ${yyyy}`;
 
-
-        isAdded ? setFormattedAddedDate(`${mm} ${dd}, ${yyyy}`) : setFormattedUpdatedDate(`${mm} ${dd}, ${yyyy}`);
+        return stringDate;
     }
 
-    //VARIABLES/FUNCTIONS TO SAVE SPECIFIC DATA OF A GROUP
-    const [selectedGroup, setSelectedGroup] = React.useState([]);
 
+    const [rowIsClick, setRowIsClick] = useState(false);
+    const [selectedRow, setSelectedRow] = React.useState([]);
+
+
+    function rowOnClick(row) {
+        setSelectedRow(row);
+        setRowIsClick(true);
+    }
+
+    function onClose() {
+        setRowIsClick(false);
+    };
+    
     return (
         <div style={{ height: 400, width: '100%' }}>
             <DataGrid
@@ -189,9 +234,133 @@ export function SavingsTable({ rows }) {
                 }}
                 pageSizeOptions={[5, 10]}
                 onRowClick={(params) => {
-                    setSelectedGroup(params.row);
+                    rowOnClick(params.row);
                 }}
             />
+            <EditSavingsDialog open={rowIsClick} setOpen={onClose} row={selectedRow} />
         </div>
+    );
+}
+
+export function AddDialog({ open, setOpen }) {
+
+    //VARIABLES FOR INPUTED DATA AND VALIDATE IT
+    const [amount, setAmount] = useState(0);
+    const [amountInvalid, setAmountInvalid] = useState(false);
+    const [formLacking, setFormLacking] = useState(true);
+
+    function amountOnChange(event) {
+        const value = event.target.value;
+        setAmount(value);
+
+        if (value === "") {
+            setAmountInvalid(true);
+        }
+        else {
+            setAmountInvalid(false);
+        }
+    }
+
+    function addSavings() {
+        const form = new FormData();
+        form.append('UserId', userId);
+        form.append('Amount', amount);
+        console.log(amount);
+
+        CreateSaving(form);
+
+        setOpen();
+    }
+
+    function onClickAmount() {
+        if (amount === 0)
+            setAmount('');
+    }
+
+    return (
+        <Dialog open={open} onClose={setOpen}>
+            <DialogTitle>Savings Form</DialogTitle>
+            <DialogContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems:'center' }}>
+                
+                <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '28ch' } }} noValidate autoComplete="off" >
+                    <div>
+                        <TextField
+                            error={amountInvalid}
+                            label="Amount"
+                            value={amount }
+                            defaultValue="Hello World"
+                            helperText={amountInvalid ? "Input a number.":""}
+                            variant="standard"
+                            onChange={(event) => amountOnChange(event)}
+                            onClick={onClickAmount}
+                            type="number"
+                        />
+                    </div>
+
+                </Box>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={setOpen}>Cancel</Button>
+                <Button onClick={addSavings} disabled={amount === 0 || amountInvalid}>Add</Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
+export function EditSavingsDialog({ open, setOpen, row }) {
+
+    //VARIABLES FOR INPUTED DATA AND VALIDATE IT
+    const [amount, setAmount] = useState(0);
+    const [amountInvalid, setAmountInvalid] = useState(false);
+
+    function amountOnChange(event) {
+        const value = event.target.value;
+        setAmount(value);
+
+        if (value === "") {
+            setAmountInvalid(true);
+        }
+        else {
+            setAmountInvalid(false);
+        }
+    }
+
+    function addSavings() {
+        const form = new FormData();
+        form.append('UserId', userId);
+        form.append('Amount', amount);
+        console.log(amount);
+
+        CreateSaving(form);
+
+        setOpen();
+    }
+
+    return (
+        <Dialog open={open} onClose={setOpen}>
+            <DialogTitle>Savings Form</DialogTitle>
+            <DialogContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '28ch' } }} noValidate autoComplete="off" >
+                    <div>
+                        <TextField
+                            error={amountInvalid}
+                            label="Amount"
+                            value={amount}
+                            defaultValue="Hello World"
+                            helperText={amountInvalid ? "Input a number." : ""}
+                            variant="standard"
+                            onChange={(event) => amountOnChange(event)}
+                            type="number"
+                        />
+                    </div>
+
+                </Box>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={setOpen}>Cancel</Button>
+                <Button onClick={addSavings}>Add</Button>
+            </DialogActions>
+        </Dialog>
     );
 }

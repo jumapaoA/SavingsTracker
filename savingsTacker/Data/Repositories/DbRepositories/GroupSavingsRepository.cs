@@ -7,24 +7,26 @@ namespace savingsTacker.Data.Repositories.DbRepositories
     {
         //instance variable
         ApplicationDbContext _DbContext;
+        public readonly ILogger<Saving> _Logger;
 
-        public GroupSavingsRepository(ApplicationDbContext dbContext)
+        public GroupSavingsRepository(ApplicationDbContext dbContext, ILogger<Saving> logger)
         {
             _DbContext = dbContext;
+            _Logger = logger;
         }
 
         public IEnumerable<Saving> GetSavingsByGroupId(int groupId)
         {
-            var groups = _DbContext.Set<GroupSaving>().Where(group => group.GroupId == groupId);
+            var groupSaving = _DbContext.Set<GroupSaving>().Where(group => group.GroupId == groupId);
 
-            IEnumerable<Saving> Savings = new List<Saving>();
+            List<Saving> Savings = new List<Saving>();
 
-            foreach (var group in groups)
+            foreach (var group in groupSaving)
             {
                 var Result = _DbContext.Set<Saving>().FirstOrDefault(saving => saving.Id == group.SavingsId);
-                Savings.Append(Result);
+                if(Result!=null)
+                    Savings.Add(Result);
             }
-
             return Savings;
         }
 

@@ -5,10 +5,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 export async function FetchUsers() {
     const response = await axios.get(`/user`);
-    console.log("FetchUsers()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -17,8 +14,6 @@ export async function FetchUsers() {
 
 export async function FetchUserById(id) {
     const response = await axios.get(`/user/${id}`);
-    console.log("FetchUserById()");
-
     if (response.status === 200) {
         console.log(response.data);
         return response.data;
@@ -27,12 +22,20 @@ export async function FetchUserById(id) {
     return null;
 }
 
+export async function FetchUserNameById(id) {
+    const response = await axios.get(`/user/${id}`);
+    if (response.status === 200) {
+        const result = response.data;
+
+        return result.firstName + " "+result.lastName;
+    }
+
+    return null;
+}
+
 export async function FetchUserBySavingsId(id) {
     const response = await axios.get(`/user/user-saving/${id}`);
-    console.log("FetchUserBySavingsId()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -41,10 +44,7 @@ export async function FetchUserBySavingsId(id) {
 
 export async function FetchMembersByGroupId(id) {
     const response = await axios.get(`/user/group-members/${id}`);
-    console.log("FetchMembersByGroupId()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -92,10 +92,7 @@ export async function UpdateUserProfilePicture(userId) {
 //////////////////////////////////////////////////////////////////////////////////
 export async function FetchSavings() {
     const response = await axios.get(`/savings`);
-    console.log("FetchSavings()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -104,11 +101,7 @@ export async function FetchSavings() {
 
 export async function FetchSavingsByUserId(userId) {
     const response = await axios.get(`/savings/user/${userId}`);
-    console.log("FetchSavingsByUserId()");
-
     if (response.status === 200) {
-        console.log(response.data);
-        //console.log(response);
         return response.data;
     }
 
@@ -117,10 +110,7 @@ export async function FetchSavingsByUserId(userId) {
 
 export async function FetchSavingsBySavingId(savingId) {
     const response = await axios.get(`/savings/${savingId}`);
-    console.log("FetchSavingsBySavingId()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -129,8 +119,6 @@ export async function FetchSavingsBySavingId(savingId) {
 
 export async function FetchSavingsByGroupId(groupId) {
     const response = await axios.get(`/savings/group/${groupId}`);
-    console.log("FetchSavingsByGroupId()");
-
     if (response.status === 200) {
         console.log(response.data);
         return response.data;
@@ -141,18 +129,18 @@ export async function FetchSavingsByGroupId(groupId) {
 
 export async function FetchGroupSavingsByUserId(userId) {
     const response = await axios.get(`/savings/group-savings/${userId}`);
-    console.log("FetchGroupSavingsByUserId()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
     return null;
 }
 
-export async function CreateSaving() {
-    const response = await axios.post(`/savings/create`);
+export async function CreateSaving(form) {
+    const response = fetch('/savings/create', {
+        method: 'POST',
+        body: form
+    })
 
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);
@@ -178,10 +166,7 @@ export async function UpdateSavings(id) {
 //////////////////////////////////////////////////////////////////////////////////
 export async function FetchGroups() {
     const response = await axios.get(`/groups`);
-    console.log("FetchGroups()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -190,10 +175,7 @@ export async function FetchGroups() {
 
 export async function FetchGroupDetailByGroupId(groupId) {
     const response = await axios.get(`/groups/${groupId}`);
-    console.log("FetchGroupDetailByGroupId()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -202,10 +184,7 @@ export async function FetchGroupDetailByGroupId(groupId) {
 
 export async function FetchGroupsByUserId(userId) {
     const response = await axios.get(`/groups/user/${userId}`);
-    console.log("FetchGroupsByUserId()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -214,10 +193,7 @@ export async function FetchGroupsByUserId(userId) {
 
 export async function FetchGroupSavingsById(groupId) {
     const response = await axios.get(`/groups/savings/${groupId}`);
-    console.log("FetchGroupSavingsById()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -295,10 +271,7 @@ export async function UpdateMemberStatus(memberId) {
 //////////////////////////////////////////////////////////////////////////////////
 export async function FetchActivityLog(userId) {
     const response = await axios.get(`/activity/${userId}`);
-    console.log("FetchActivityLog()");
-
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 

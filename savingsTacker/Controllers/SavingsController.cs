@@ -73,19 +73,9 @@ namespace savingsTacker.Controllers
         public IActionResult CreateSaving()
         {
             DateTime currentDate = DateTime.Now;
-            Random Random = new Random();
-            int NewSavingsId = Random.Next(0, 1000);
-            var Savings = _Savings.GetSavingsById(NewSavingsId);
 
-            while (Savings != null)
+            var Savings = new Saving()
             {
-                NewSavingsId = Random.Next(0, 1000);
-                Savings = _Savings.GetSavingsById(NewSavingsId);
-            }
-
-            Savings = new Saving()
-            {
-                Id = NewSavingsId,
                 Amount = decimal.Parse(Request.Form["Amount"].ToString()),
                 UserId = Request.Form["UserId"].ToString(),
                 DateContributed = currentDate,
@@ -93,9 +83,7 @@ namespace savingsTacker.Controllers
             };
 
             _Savings.AddSaving(Savings);
-            _Logger.LogInformation($"Savings with ID {NewSavingsId} has been listed.");
 
-            AddActivity($"Added new savings with an ID of {NewSavingsId}");
 
             return Ok(User);
         }
