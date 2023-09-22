@@ -17,7 +17,7 @@ import Box from '@mui/material/Box';
 import AutoDeleteOutlinedIcon from '@mui/icons-material/AutoDeleteOutlined';
 import Swal from 'sweetalert2';
 
-import { FetchSavingsByUserId, FetchUsers, FetchSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings } from '../axios/fetch-api';
+import { FetchSavingsByUserId, FetchUsers, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings } from '../axios/fetch-api';
 
 const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
 //const userId = "ab8ebde1-5431-42e0-9db0-ba001529ca1f";
@@ -30,6 +30,7 @@ export default function Orders() {
     const [selectedGroup, setSelectedGroup] = React.useState([]);
     const [selectedRow, setSelectedRow] = React.useState([]);
     const [rowIsClick, setRowIsClick] = useState(false);
+    const [totalSavings, setTotalSavings] = useState(0);
 
     useEffect(() => {
         FetchSavingsByUserId(userId)
@@ -57,11 +58,23 @@ export default function Orders() {
         }
         else
             setDataRow(savings);
+
     }, [selectedGroup]);
 
     useEffect(() => {
-        console.log(selectedRow);
-    }, [selectedRow]);
+        getTotalSavings();
+    }, [dataRow]);
+
+    useEffect(() => {
+        console.log(totalSavings);
+    }, [totalSavings]);
+
+    function getTotalSavings() {
+        if (dataRow) {
+            const calculatedTotalSavings = dataRow.reduce((total, item) => total + item.amount, 0);
+            setTotalSavings(calculatedTotalSavings);
+        }
+    }
 
     function onOpenAddForm() {
         setAddIsClick(true);
@@ -101,7 +114,7 @@ export default function Orders() {
                             <h6 style={{ padding: '10px' }}>Total savings</h6>
                         </div>
                         <div style={{ alignSelf: 'center' }}>
-                            <h4>₱0.00</h4>
+                            <h4>₱{totalSavings}</h4>
                         </div>
                         <div style={{ marginLeft: 'auto', marginRight: '3px' }} >
                             <IconButton aria-label="add savings" onClick={() => onOpenAddForm()} color="primary" title="Add Savings" style={{ top: '-15px' }} >
@@ -114,7 +127,7 @@ export default function Orders() {
 
                 <div style={{ backgroundColor: '#F4F4F4' }}>
                     <Container style={{ marginBottom: '1.5em' }}>
-                        <p style={{ height: '10px' }}></p>
+                        <p style={{ height: '5px' }}></p>
 
                         <div style={{ display: 'flex', flexDirection: 'row', alignItems:'center', flexWrap: 'wrap', marginTop: '10px', marginBottom: '10px', marginLeft: '15em' }}>
                             <div style={{ flex: '60%' }}>

@@ -70,6 +70,15 @@ namespace savingsTacker.Controllers
         }
 
         [HttpGet]
+        [Route("[controller]/admin/{userId:guid}")]
+        public IEnumerable<GroupDetails> GetGroupsByCreator(string userId)
+        {
+            var Groups = _GroupDetails.GetGroupsByAdmin(userId);
+
+            return Groups;
+        }
+
+        [HttpGet]
         [Route("[controller]/savings/{groupId:int}")]
         public GroupSaving GetGroupSaving(int groupId) 
         {
@@ -86,29 +95,19 @@ namespace savingsTacker.Controllers
         public IActionResult CreateGroup()
         {
             DateTime currentDate = DateTime.Now;
-            Random Random = new Random();
-            int NewGroupId = Random.Next(0, 1000);
-            var Group = _GroupDetails.GetGroupDetailById(NewGroupId);
-
-            while (Group != null)
+            var Group = new GroupDetails()
             {
-                NewGroupId = Random.Next(0, 1000);
-                Group = _GroupDetails.GetGroupDetailById(NewGroupId);
-            }
-
-            Group = new GroupDetails()
-            {
-                Id = NewGroupId,
                 GroupName = Request.Form["GroupName"].ToString(),
                 GroupDescription = Request.Form["GroupDescription"].ToString(),
+                GroupCreator = Request.Form["GroupCreator"].ToString(),
                 DateCreated = currentDate,
-                IsActive = true
+                IsActive = Boolean.Parse(Request.Form["IsActive"].ToString())
             };
 
             _GroupDetails.AddGroup(Group);
-            _Logger.LogInformation($"Savings with ID {NewGroupId} has been listed.");
+            _Logger.LogInformation($"New group has been listed.");
 
-            AddActivity($"Added new group with an ID of {NewGroupId}");
+            AddActivity($"New group has been listed.");
 
             return Ok(Group);
         }
@@ -241,7 +240,7 @@ namespace savingsTacker.Controllers
             Group.GroupName = Request.Form["GroupName"].ToString();
             Group.GroupDescription = Request.Form["GroupDescription"].ToString();
             Group.DateUpdated = currentDate;
-            Group.IsActive = true;
+            Group.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());
 
             _GroupDetails.UpdateGroupDetails(Group);
             _Logger.LogInformation($"Group with ID {groupId} has been listed.");
@@ -296,26 +295,15 @@ namespace savingsTacker.Controllers
 
         public ActivityLog AddActivity(string message)
         {
-            Random Random = new Random();
-            int NewActivityId = Random.Next(0, 1000);
-            var Activity = _ActivityLog.GetActivityById(NewActivityId);
-
-            while (Activity != null)
+            var Activity = new ActivityLog()
             {
-                NewActivityId = Random.Next(0, 1000);
-                Activity = _ActivityLog.GetActivityById(NewActivityId);
-            }
-
-            Activity = new ActivityLog()
-            {
-                Id = NewActivityId,
                 UserId = Request.Form["UserId"].ToString(),
                 Message = message,
                 DateAccess = DateTime.Now
             };
 
             _ActivityLog.AddActivity(Activity);
-            _Logger.LogInformation($"Activity with ID {NewActivityId} has been listed.");
+            _Logger.LogInformation($"Updated the group details.");
 
             return Activity;
         }

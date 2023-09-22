@@ -5,7 +5,8 @@ import { FetchData } from "./components/FetchData";
 import Home from "./components/Home";
 
 import Chart from './pages/Chart';
-import Deposits from './pages/Deposits';
+import ActivityLog from './pages/ActivityLog';
+import Reports from './pages/Reports';
 import Savings from './pages/Savings';
 
 const AppRoutes = [
@@ -20,6 +21,14 @@ const AppRoutes = [
     {
         path: '/contributor',
         element: <Contributor />
+    },
+    {
+        path: '/activities',
+        element: <ActivityLog />
+    },
+    {
+        path: '/reports',
+        element: <Reports />
     },
     {
         path: '/fetch-data',

@@ -143,7 +143,6 @@ export async function CreateSaving(form) {
     })
 
     if (response.status === 200 || response.status === 204) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -157,7 +156,6 @@ export async function UpdateSavings(id, form) {
     });
 
     if (response.status === 200 || response.status === 204) {
-        console.log(response.data);
         return response.data;
     }
 
@@ -194,6 +192,15 @@ export async function FetchGroupsByUserId(userId) {
     return null;
 }
 
+export async function FetchGroupsByCreator(userId) {
+    const response = await axios.get(`/groups/admin/${userId}`);
+    if (response.status === 200) {
+        return response.data;
+    }
+
+    return null;
+}
+
 export async function FetchGroupSavingsById(groupId) {
     const response = await axios.get(`/groups/savings/${groupId}`);
     if (response.status === 200) {
@@ -203,9 +210,11 @@ export async function FetchGroupSavingsById(groupId) {
     return null;
 }
 
-export async function CreateGroup() {
-    const response = await axios.post(`/groups/create`);
-
+export async function CreateGroup(form) {
+    const response = fetch(`/groups/create`, {
+        method: 'POST',
+        body: form
+    });
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);
         return response.data;
@@ -236,9 +245,11 @@ export async function CreateGroupSavings(groupId) {
     return null;
 }
 
-export async function UpdateGroup(groupId) {
-    const response = await axios.patch(`/groups/update/${groupId}`);
-
+export async function UpdateGroup(groupId, form) {
+    const response = fetch(`/groups/update/${groupId}`, {
+        method: 'PATCH',
+        body: form
+    });
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);
         return response.data;

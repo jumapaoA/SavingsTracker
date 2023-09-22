@@ -29,11 +29,17 @@ export const mainListItems = (
             </ListItemIcon>
             <ListItemText primary="Groups" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton href='/reports'>
             <ListItemIcon>
                 <BarChartIcon />
             </ListItemIcon>
             <ListItemText primary="Reports" />
+        </ListItemButton>
+        <ListItemButton href='/activities'>
+            <ListItemIcon>
+                <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Activity Log" />
         </ListItemButton>
     </React.Fragment>
 );

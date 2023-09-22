@@ -108,7 +108,7 @@ namespace savingsTacker.Controllers
             Saving.UserUpdated = Request.Form["UserId"].ToString();
             Saving.Amount = decimal.Parse(Request.Form["Amount"].ToString());
             Saving.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());
-
+            
             _Savings.UpdateSavings(Saving);
 
             AddActivity($"Updated savings with an ID of {savingId}");
