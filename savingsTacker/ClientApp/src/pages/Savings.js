@@ -14,8 +14,10 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
+import AutoDeleteOutlinedIcon from '@mui/icons-material/AutoDeleteOutlined';
+import Swal from 'sweetalert2';
 
-import { FetchSavingsByUserId, FetchUsers, FetchSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving } from '../axios/fetch-api';
+import { FetchSavingsByUserId, FetchUsers, FetchSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings } from '../axios/fetch-api';
 
 const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
 //const userId = "ab8ebde1-5431-42e0-9db0-ba001529ca1f";
@@ -26,6 +28,8 @@ export default function Orders() {
     const [groups, setGroups] = useState([]);
     const [addIsClick, setAddIsClick] = useState(false);
     const [selectedGroup, setSelectedGroup] = React.useState([]);
+    const [selectedRow, setSelectedRow] = React.useState([]);
+    const [rowIsClick, setRowIsClick] = useState(false);
 
     useEffect(() => {
         FetchSavingsByUserId(userId)
@@ -55,6 +59,10 @@ export default function Orders() {
             setDataRow(savings);
     }, [selectedGroup]);
 
+    useEffect(() => {
+        console.log(selectedRow);
+    }, [selectedRow]);
+
     function onOpenAddForm() {
         setAddIsClick(true);
     }
@@ -72,6 +80,14 @@ export default function Orders() {
             setSelectedGroup([]);
         }
     }
+
+    function rowOnClick() {
+        setRowIsClick(true);
+    }
+
+    function onClose() {
+        setRowIsClick(false);
+    };
 
     return (
         <div>
@@ -130,7 +146,8 @@ export default function Orders() {
                                 />
                             </div>
                         </div>
-                        <SavingsTable rows={dataRow} />
+                        <SavingsTable rows={dataRow} setSelectedRow={setSelectedRow} setRowIsClick={rowOnClick} />
+                        {rowIsClick && <EditSavingsDialog open={rowIsClick} setOpen={onClose} row={selectedRow} setRowIsClick={rowOnClick} />} 
                     </Container>
                 </div>
             </div>
@@ -138,7 +155,7 @@ export default function Orders() {
     );
 }
 
-export function SavingsTable({ rows }) {
+export function SavingsTable({ rows, setSelectedRow, setRowIsClick }) {
     const [users, setUsers] = useState([]);
     const defaultDate = 'February 1, 1';
     const columns = [
@@ -149,7 +166,13 @@ export function SavingsTable({ rows }) {
                 return getUsername(userId);
             },
         },
-        { field: 'amount', headerName: 'Amount', type: 'number', width: 100 },
+        {
+            field: 'amount', headerName: 'Amount', type: 'number', width: 100 ,
+            valueGetter: (params) => {
+                const value = params.row.amount;
+                return `₱${value}`;
+            },
+        },
         {
             field: 'dateContributed', headerName: 'Date Contributed', width: 200,
             valueGetter: (params) => {
@@ -159,9 +182,9 @@ export function SavingsTable({ rows }) {
             },
         },
         {
-            field: 'updatedBy', headerName: 'Updated By', width: 200,
+            field: 'userUpdated', headerName: 'Updated By', width: 200,
             valueGetter: (params) => {
-                const userId = params.row.updatedBy;
+                const userId = params.row.userUpdated;
                 return getUsername(userId);
             },
         },
@@ -207,20 +230,6 @@ export function SavingsTable({ rows }) {
 
         return stringDate;
     }
-
-
-    const [rowIsClick, setRowIsClick] = useState(false);
-    const [selectedRow, setSelectedRow] = React.useState([]);
-
-
-    function rowOnClick(row) {
-        setSelectedRow(row);
-        setRowIsClick(true);
-    }
-
-    function onClose() {
-        setRowIsClick(false);
-    };
     
     return (
         <div style={{ height: 400, width: '100%' }}>
@@ -234,10 +243,10 @@ export function SavingsTable({ rows }) {
                 }}
                 pageSizeOptions={[5, 10]}
                 onRowClick={(params) => {
-                    rowOnClick(params.row);
+                    setSelectedRow(params.row);
+                    setRowIsClick();
                 }}
             />
-            <EditSavingsDialog open={rowIsClick} setOpen={onClose} row={selectedRow} />
         </div>
     );
 }
@@ -253,7 +262,7 @@ export function AddDialog({ open, setOpen }) {
         const value = event.target.value;
         setAmount(value);
 
-        if (value === "") {
+        if (value === "" || value === 0) {
             setAmountInvalid(true);
         }
         else {
@@ -267,14 +276,23 @@ export function AddDialog({ open, setOpen }) {
         form.append('Amount', amount);
         console.log(amount);
 
-        CreateSaving(form);
+        CreateSaving(form).then(
+            Swal.fire({
+                icon: 'success',
+                title: 'Your work has been saved',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        );
 
         setOpen();
     }
 
     function onClickAmount() {
-        if (amount === 0)
+        if (amount === 0) {
             setAmount('');
+            setAmountInvalid(true);
+        }
     }
 
     return (
@@ -310,35 +328,92 @@ export function AddDialog({ open, setOpen }) {
 export function EditSavingsDialog({ open, setOpen, row }) {
 
     //VARIABLES FOR INPUTED DATA AND VALIDATE IT
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState(row.amount);
     const [amountInvalid, setAmountInvalid] = useState(false);
+    const [formLacking, setFormLacking] = useState(true);
 
     function amountOnChange(event) {
         const value = event.target.value;
         setAmount(value);
+        console.log(value);
+        console.log(row.amount+"");
 
-        if (value === "") {
+        if (value === "" || value === 0) {
             setAmountInvalid(true);
+            setFormLacking(true);
         }
         else {
             setAmountInvalid(false);
+            setFormLacking(false);
         }
+
+        if (value === `${row.amount}`)
+            setFormLacking(true);
     }
 
-    function addSavings() {
+    function updateSavings(active) {
+        row.amount = amount;
         const form = new FormData();
         form.append('UserId', userId);
         form.append('Amount', amount);
-        console.log(amount);
-
-        CreateSaving(form);
+        form.append('IsActive', active);
+        
+        UpdateSavings(row.id, form).then(
+            Swal.fire({
+                icon: 'success',
+                title: 'Saved!',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        );
 
         setOpen();
     }
 
+    function onClickAmount() {
+        if (amount === 0) {
+            setAmount('');
+            setFormLacking(true);
+        }
+    }
+
+    function onClose() {
+        setAmountInvalid(false);
+        setFormLacking(true);
+        setOpen();
+    }
+
+    function onDelete() {
+        onClose();
+
+        Swal.fire({
+            title: 'Do you want to delete this savings?',
+            showDenyButton: true,
+            confirmButtonText: 'Delete',
+            denyButtonText: `Cancel`,
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    updateSavings(false);
+                    Swal.fire('Saved!', '', 'success')
+                }
+                else if (result.isDenied) {
+                    Swal.fire('Changes are not saved', '', 'info')
+                }
+            })
+    }
+
     return (
-        <Dialog open={open} onClose={setOpen}>
-            <DialogTitle>Savings Form</DialogTitle>
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label>Savings Form</label>
+                    <IconButton aria-label="delete savings" onClick={onDelete} color="warning" title="Delete savings" >
+                        <AutoDeleteOutlinedIcon />
+                    </IconButton>
+                    
+                </div>
+            </DialogTitle>
             <DialogContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                 <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '28ch' } }} noValidate autoComplete="off" >
@@ -347,10 +422,10 @@ export function EditSavingsDialog({ open, setOpen, row }) {
                             error={amountInvalid}
                             label="Amount"
                             value={amount}
-                            defaultValue="Hello World"
                             helperText={amountInvalid ? "Input a number." : ""}
                             variant="standard"
                             onChange={(event) => amountOnChange(event)}
+                            onClick={onClickAmount}
                             type="number"
                         />
                     </div>
@@ -358,8 +433,8 @@ export function EditSavingsDialog({ open, setOpen, row }) {
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={setOpen}>Cancel</Button>
-                <Button onClick={addSavings}>Add</Button>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={()=>updateSavings(true)} disabled={amountInvalid || formLacking}>Update</Button>
             </DialogActions>
         </Dialog>
     );

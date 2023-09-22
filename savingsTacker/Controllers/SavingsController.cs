@@ -83,7 +83,7 @@ namespace savingsTacker.Controllers
             };
 
             _Savings.AddSaving(Savings);
-
+            AddActivity($"Added a new savings.");
 
             return Ok(User);
         }
@@ -101,7 +101,7 @@ namespace savingsTacker.Controllers
             {
                 return NotFound();
             }
-
+            _Logger.LogInformation("Line 104: "+savingId);
             DateTime currentDate = DateTime.Now;
 
             Saving.DateUpdated = currentDate;
@@ -119,25 +119,16 @@ namespace savingsTacker.Controllers
         public ActivityLog AddActivity(string message)
         {
             Random Random = new Random();
-            int NewActivityId = Random.Next(0, 1000);
-            var Activity = _ActivityLog.GetActivityById(NewActivityId);
 
-            while (Activity != null)
+            var Activity = new ActivityLog()
             {
-                NewActivityId = Random.Next(0, 1000);
-                Activity = _ActivityLog.GetActivityById(NewActivityId);
-            }
-
-            Activity = new ActivityLog()
-            {
-                Id = NewActivityId,
                 UserId = Request.Form["UserId"].ToString(),
                 Message = message,
                 DateAccess = DateTime.Now
             };
 
             _ActivityLog.AddActivity(Activity);
-            _Logger.LogInformation($"Activity with ID {NewActivityId} has been listed.");
+            _Logger.LogInformation($"New activity has been listed.");
 
             return Activity;
         }

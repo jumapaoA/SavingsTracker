@@ -150,8 +150,11 @@ export async function CreateSaving(form) {
     return null;
 }
 
-export async function UpdateSavings(id) {
-    const response = await axios.patch(`/savings/update/${id}`);
+export async function UpdateSavings(id, form) {
+    const response = fetch(`/savings/update/${id}`, {
+        method: 'PATCH',
+        body: form
+    });
 
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);
