@@ -37,13 +37,13 @@ export default function ActivityLog() {
 }
 
 export function SavingsTable({ rows }) {
-    const defaultDate = 'February 1, 1';
+    const defaultDate = 'January 1, 1';
     const columns = [
         {
             field: 'message', headerName: 'Message', width: 500 ,
         },
         {
-            field: 'dateAccess', headerName: 'Date Accessed', width: 200,
+            field: 'dateAccess', headerName: 'Date Accessed', width: 300,
             valueGetter: (params) => {
                 const date = params.row.dateAccess;
                 const formattedUpdatedDate =  formatDate(date);
@@ -56,11 +56,16 @@ export function SavingsTable({ rows }) {
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
         const date = new Date(dateString);
-        const mm = months[date.getMonth() + 1];
+        const mm = months[date.getMonth()];
         const dd = date.getDate();
         const yyyy = date.getFullYear();
-        const stringDate = `${mm} ${dd}, ${yyyy}`;
+        const hour = date.getHours();
+        const hh = hour > 12 ? hour-12 : hour;
+        const AMorPM = hour > 12 ? 'PM' : 'AM';
+        const mins = date.getMinutes();
+        const min = mins < 10? `0${mins}`:mins;
 
+        const stringDate = `${mm} ${dd}, ${yyyy} (${hh}:${min} ${AMorPM})`;
         return stringDate;
     }
     

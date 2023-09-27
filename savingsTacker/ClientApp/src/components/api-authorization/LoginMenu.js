@@ -59,8 +59,6 @@ export class LoginMenu extends Component {
     }
 
     authenticatedView(profilePath, logoutPath, userFullname, logoutState) {
-        console.log(userFullname);
-
         return (<Fragment>
             <NavItem style={{ listStyleType: 'none', marginLeft: '10px', marginRight: '10px' }}>
                 <NavLink tag={Link} className="text-light" to={profilePath} title='Profile'>{userFullname}</NavLink>

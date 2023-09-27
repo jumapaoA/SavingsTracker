@@ -138,19 +138,9 @@ namespace savingsTacker.Controllers
             }
 
             DateTime currentDate = DateTime.Now;
-            Random Random = new Random();
-            int NewMemberId = Random.Next(0, 1000);
-            var Member = _GroupMember.GetMemberById(NewMemberId);
 
-            while (Member != null)
+            var Member = new GroupMember()
             {
-                NewMemberId = Random.Next(0, 1000);
-                Member = _GroupMember.GetMemberById(NewMemberId);
-            }
-
-            Member = new GroupMember()
-            {
-                Id = NewMemberId,
                 GroupId = groupId,
                 UserId = Request.Form["UserId"].ToString(),
                 IsAdmin = Boolean.Parse(Request.Form["IsAdmin"].ToString()),
@@ -159,9 +149,9 @@ namespace savingsTacker.Controllers
             };
 
             _GroupMember.AddGroupMember(Member);
-            _Logger.LogInformation($"Member with ID {NewMemberId} has been listed.");
+            _Logger.LogInformation($"Added new member to group {Group.GroupName}.");
 
-            AddActivity($"Added new member to the group with an ID of {NewMemberId}");
+            AddActivity($"Added new member to group {Group.GroupName}.");
 
             return Ok(Member);
         }
@@ -235,7 +225,25 @@ namespace savingsTacker.Controllers
             Group.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());
 
             _GroupDetails.UpdateGroupDetails(Group);
-            _Logger.LogInformation($"Group with ID {groupId} has been listed.");
+            _Logger.LogInformation($"You updated the group with ID {groupId}.");
+
+            if (! Group.IsActive)
+            {
+                var Members = _GroupMember.GetMembersByGroupId(Group.Id);
+                var Savings = _GroupSavings.GetSavingsByGroupId(Group.Id);
+
+                foreach (var Member in Members)
+                {
+                    Member.IsActive = false;
+                    _GroupMember.UpdateGroupMember(Member);
+                }
+
+                foreach (var Saving in Savings)
+                {
+                    Saving.IsActive = false;
+                    _Savings.UpdateSavings(Saving);
+                }
+            }
 
             AddActivity($"Updated the group details with an ID of {groupId}");
 
@@ -257,7 +265,7 @@ namespace savingsTacker.Controllers
             _GroupMember.UpdateGroupMember(Member);
             _Logger.LogInformation($"Member with ID {memberId} has been updated.");
 
-            AddActivity($"Updated the group admin with an ID of {memberId}");
+            AddActivity($"Add new admin to a group.");
 
             return Ok(Member);
         }

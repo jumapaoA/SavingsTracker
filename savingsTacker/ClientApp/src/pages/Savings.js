@@ -15,20 +15,18 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import AutoDeleteOutlinedIcon from '@mui/icons-material/AutoDeleteOutlined';
 import Stack from '@mui/material/Stack';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import Swal from 'sweetalert2';
 
-import { UserId, FetchSavingsByUserId, FetchUsers, CreateGroupSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings, FetchGroupBySavingsId, FetchGroupSavingsById, UpdateGroupSavings } from '../axios/fetch-api';
-
-//const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
-//const userId = "ab8ebde1-5431-42e0-9db0-ba001529ca1f";
+import { UserId, FetchSavingsByUserId, FetchUsers, CreateGroupSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings, FetchGroupBySavingsId, UpdateGroupSavings } from '../axios/fetch-api';
 
 export default function Orders() {
     const [savings, setSavings] = useState([]);
     const [dataRow, setDataRow] = useState([]);
     const [groups, setGroups] = useState([]);
     const [addIsClick, setAddIsClick] = useState(false);
-    const [selectedGroup, setSelectedGroup] = React.useState([]);
-    const [selectedRow, setSelectedRow] = React.useState([]);
+    const [selectedGroup, setSelectedGroup] = useState([]);
+    const [selectedRow, setSelectedRow] = useState([]);
     const [rowIsClick, setRowIsClick] = useState(false);
     const [totalSavings, setTotalSavings] = useState(0);
     const [userId, setUserId] = useState("");
@@ -46,8 +44,9 @@ export default function Orders() {
         if (userId) {
             FetchSavingsByUserId(userId)
                 .then(response => {
-                    setSavings(response);
-                    setDataRow(response);
+                    const filtered = response.filter(item => item.isActive);
+                    setSavings(filtered);
+                    setDataRow(filtered);
                 });
 
             FetchGroupsByUserId(userId).then(response => setGroups(response));
@@ -56,13 +55,14 @@ export default function Orders() {
     }, [userId]);
 
     useEffect(() => {
+        console.log(selectedGroup);
         if (selectedGroup) {
             const id = selectedGroup.id;
             if (id) {
                 FetchSavingsByGroupId(id)
                     .then((response) => {
-                        console.log(response);
-                        setDataRow(response);
+                        const filtered = response.filter(item => item.isActive);
+                        setDataRow(filtered);
                     });
             }
             else {
@@ -109,18 +109,38 @@ export default function Orders() {
             return;
         }
 
-        for (let i = 0; i < dataRow.length; i++) {
-            const currentItem = dataRow[i];
-            console.log(currentItem);
+        Swal.fire({
+            title: 'Withdraw savings?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Continue'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                for (let i = 0; i < dataRow.length; i++) {
+                    const currentItem = dataRow[i];
+                    console.log(currentItem);
 
-            const form = new FormData();
-            form.append('UserId', currentItem.userId);
-            form.append('Amount', currentItem.amount);
-            form.append('IsActive', false);
-            form.append('Description', currentItem.description);
+                    const form = new FormData();
+                    form.append('UserId', currentItem.userId);
+                    form.append('Amount', currentItem.amount);
+                    form.append('IsActive', false);
+                    form.append('Description', currentItem.description);
 
-            UpdateSavings(currentItem.id, form);
-        }
+                    UpdateSavings(currentItem.id, form);
+                }
+                defaultStatus();
+
+                Swal.fire({
+                    title: 'Withdrawing...',
+                    html: 'Removing your savings.',
+                    timer: 1500,
+                    timerProgressBar: true
+                })
+            }
+        })
         
     }
 
@@ -131,6 +151,11 @@ export default function Orders() {
     function onClose() {
         setRowIsClick(false);
     };
+
+    function defaultStatus() {
+        setDataRow(savings);
+        setSelectedGroup([]);
+    }
 
     return (
         <div>
@@ -178,9 +203,8 @@ export default function Orders() {
                             {/*<div style={{ flex: '2%' }} />*/}
                             <div style={{ flex: '30%', padding: '5px' }}>
                                 <Autocomplete
-                                    value={selectedGroup.groupName}
+                                    value={selectedGroup.length === 0? '':selectedGroup.groupName}
                                     onChange={(event, newValue) => {
-
                                         onGroupChange(newValue);
                                     }}
                                     id="controllable-states-demo"
@@ -189,7 +213,7 @@ export default function Orders() {
                                 />
                             </div>
                         </div>
-                        {dataRow.length !==0 && < Button variant="outlined" onClick={() => withdrawAll()}>Withdraw All</Button>}
+                        < Button variant="outlined" startIcon={<LocalAtmIcon />} onClick={() => withdrawAll()} disabled={dataRow.length === 0}>Withdraw All</Button> 
                         <p style={{ height: '0.1px' }}></p>
                         <SavingsTable rows={dataRow} setSelectedRow={setSelectedRow} setRowIsClick={rowOnClick} />
                         {rowIsClick && <EditSavingsDialog open={rowIsClick} setOpen={onClose} row={selectedRow} setRowIsClick={rowOnClick} userId={userId} groups={groups} />} 
@@ -242,13 +266,6 @@ export function SavingsTable({ rows, setSelectedRow, setRowIsClick }) {
                 const date = params.row.dateUpdated;
                 const formattedUpdatedDate =  formatDate(date);
                 return formattedUpdatedDate === defaultDate ? '' : formattedUpdatedDate;
-            },
-        },
-        {
-            field: 'isActive', headerName: 'Status', width: 120,
-            valueGetter: (params) => {
-                const status = params.row.isActive;
-                return status ? 'Active' : 'Inactive';
             },
         },
     ];

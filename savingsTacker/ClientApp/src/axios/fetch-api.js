@@ -239,9 +239,11 @@ export async function CreateGroup(form) {
     return null;
 }
 
-export async function CreateGroupMember(groupId) {
-    const response = await axios.post(`/groups/add-member/${groupId}`);
-
+export async function CreateGroupMember(groupId, form) {
+    const response = fetch(`/groups/add-member/${groupId}`, {
+        method: 'POST',
+        body: form
+    });
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);
         return response.data;
@@ -277,8 +279,11 @@ export async function UpdateGroup(groupId, form) {
     return null;
 }
 
-export async function UpdateAdminMember(memberId) {
-    const response = await axios.patch(`/groups/update-admin/${memberId}`);
+export async function UpdateAdminMember(memberId, form) {
+    const response = fetch(`/groups/update-admin/${memberId}`, {
+        method: 'PATCH',
+        body: form
+    });
 
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);
@@ -288,8 +293,11 @@ export async function UpdateAdminMember(memberId) {
     return null;
 }
 
-export async function UpdateMemberStatus(memberId) {
-    const response = await axios.patch(`/groups/member-status/${memberId}`);
+export async function UpdateMemberStatus(memberId, form) {
+    const response = fetch(`/groups/member-status/${memberId}`, {
+        method: 'PATCH',
+        body: form
+    });
 
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);

@@ -5,6 +5,7 @@ import { FetchData } from "./components/FetchData";
 import ActivityLog from './pages/ActivityLog';
 import Reports from './pages/Reports';
 import Savings from './pages/Savings';
+import Members from './pages/Members';
 
 const AppRoutes = [
     {
@@ -21,6 +22,11 @@ const AppRoutes = [
         path: '/contributor',
         requireAuth: true,
         element: <Contributor />
+    },
+    {
+        path: '/member',
+        requireAuth: true,
+        element: <Members />
     },
     {
         path: '/activities',

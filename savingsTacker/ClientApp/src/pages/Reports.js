@@ -24,13 +24,13 @@ export default function Reports() {
     const [dataRow, setDataRow] = useState([]);
     const tabs = [
         {
-            id: 0, title: 'Savings', content: <SavingsTable savings={savings} selectedGroup={selectedGroup} setData={setDataRow} />
+            id: 0, title: 'Savings', content: <SavingsTable savings={savings} selectedGroup={selectedGroup} />
         },
         {
-            id: 1, title: 'Groups', content: <GroupsTable groups={groups} setData={setDataRow} />
+            id: 1, title: 'Groups', content: <GroupsTable groups={groups} />
         },
         {
-            id: 2, title: 'Group Members', content: <MembersTable selectedGroup={selectedGroup} setData={setDataRow} />
+            id: 2, title: 'Group Members', content: <MembersTable selectedGroup={selectedGroup} />
         },
     ];
 
@@ -42,10 +42,6 @@ export default function Reports() {
 
         FetchGroupsByUserId(userId).then(response => setGroups(response));
     }, []);
-
-    useEffect(() => {
-
-    }, [dataRow]);
 
     const handleChange = (event, newValue) => {
         setSelectedGroup([]);
@@ -107,7 +103,7 @@ export default function Reports() {
 }
 
 
-export function SavingsTable({ savings, selectedGroup, setData }) {
+export function SavingsTable({ savings, selectedGroup }) {
     const [users, setUsers] = useState([]);
     const [dataRow, setDataRow] = useState(savings);
     const defaultDate = 'February 1, 1';
@@ -169,10 +165,6 @@ export function SavingsTable({ savings, selectedGroup, setData }) {
     }, [savings]);
 
     useEffect(() => {
-        setData(dataRow);
-    }, [dataRow]);
-
-    useEffect(() => {
         if (selectedGroup) {
             const id = selectedGroup.id;
             if (id) {
@@ -228,7 +220,7 @@ export function SavingsTable({ savings, selectedGroup, setData }) {
     );
 }
 
-export function GroupsTable({ groups, setData }) {
+export function GroupsTable({ groups }) {
     const [users, setUsers] = useState([]);
     const defaultDate = 'February 1, 1';
     const columns = [
@@ -268,7 +260,6 @@ export function GroupsTable({ groups, setData }) {
     ];
 
     useEffect(() => {
-        setData(groups);
         FetchUsers().then((response) => {
             setUsers(response);
         });
@@ -311,7 +302,7 @@ export function GroupsTable({ groups, setData }) {
     );
 }
 
-export function MembersTable({ selectedGroup, setData }) {
+export function MembersTable({ selectedGroup }) {
     const [users, setUsers] = useState([]);
     const [dataRow, setDataRow] = useState([]);
     const [showMessage, setShowMessage] = useState(true);
@@ -361,10 +352,6 @@ export function MembersTable({ selectedGroup, setData }) {
             setUsers(response);
         });
     }, []);
-
-    useEffect(() => {
-        setData(dataRow);
-    });
 
     useEffect(() => {
         if (selectedGroup) {

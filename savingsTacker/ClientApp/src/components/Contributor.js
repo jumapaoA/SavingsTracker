@@ -17,26 +17,34 @@ import AutoDeleteOutlinedIcon from '@mui/icons-material/AutoDeleteOutlined';
 import Alert from '@mui/material/Alert';
 import Swal from 'sweetalert2';
 
-import { FetchSavingsByUserId, FetchUsers, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings, UpdateGroup, CreateGroup, FetchGroupsByCreator } from '../axios/fetch-api';
-
-const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
-//const userId = "ab8ebde1-5431-42e0-9db0-ba001529ca1f";
+import { UserId, FetchUsers, UpdateGroup, CreateGroup, FetchGroupsByCreator } from '../axios/fetch-api';
 
 export default function Contributor() {
     const [groups, setGroups] = useState([]);
     const [addIsClick, setAddIsClick] = useState(false);
     const [selectedRow, setSelectedRow] = React.useState([]);
     const [rowIsClick, setRowIsClick] = useState(false);
+    const [userId, setUserId] = useState("");
 
     useEffect(() => {
-        FetchGroupsByCreator(userId).then(response => setGroups(response));
+        UserId()
+            .then(response => {
+                setUserId(response.sub)
+                console.log(response);
+            });
     }, []);
+
+    useEffect(() => {
+        if (userId)
+            defaultStatus();
+    }, [userId]);
 
     function onOpenAddForm() {
         setAddIsClick(true);
     }
 
     function onCloseAddForm() {
+        defaultStatus();
         setAddIsClick(false);
     }
 
@@ -45,7 +53,16 @@ export default function Contributor() {
     }
 
     function onClose() {
+        defaultStatus();
         setRowIsClick(false);
+    }
+
+    function defaultStatus() {
+        FetchGroupsByCreator(userId)
+            .then(response => {
+                const filteredResult = response.filter(item => item.isActive);
+                setGroups(filteredResult);
+            });
     }
 
     return (
@@ -66,7 +83,7 @@ export default function Contributor() {
                             <IconButton aria-label="add group" onClick={() => onOpenAddForm()} color="primary" title="Add Savings" style={{ top: '-15px' }} >
                                 <AddCircleOutlineIcon sx={{ fontSize: 30 }} />
                             </IconButton>
-                            {addIsClick && <AddGroupDialog open={addIsClick} setOpen={() => onCloseAddForm()} />}
+                            {addIsClick && <AddGroupDialog open={addIsClick} setOpen={() => onCloseAddForm()} userId={userId} />}
                         </div>
                     </Paper>
                 </div>
@@ -107,16 +124,8 @@ export function GroupsTable({ rows, setSelectedRow, setRowIsClick }) {
     const [users, setUsers] = useState([]);
     const defaultDate = 'February 1, 1';
     const columns = [
-        { field: 'id', headerName: 'Number', width: 100 },
         { field: 'groupName', headerName: 'Name', width: 200, },
         { field: 'groupDescription', headerName: 'Description', width: 200, },
-        {
-            field: 'groupCreator', headerName: 'Creator', width: 200,
-            valueGetter: (params) => {
-                const userId = params.row.groupCreator;
-                return getUsername(userId);
-            },
-        },
         {
             field: 'dateCreated', headerName: 'Date Created', width: 200,
             valueGetter: (params) => {
@@ -188,7 +197,7 @@ export function GroupsTable({ rows, setSelectedRow, setRowIsClick }) {
     );
 }
 
-export function AddGroupDialog({ open, setOpen }) {
+export function AddGroupDialog({ open, setOpen, userId }) {
 
     //VARIABLES FOR INPUTED DATA AND VALIDATE IT
     const [name, setName] = useState('');
