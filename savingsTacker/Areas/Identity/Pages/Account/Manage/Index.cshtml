@@ -7,17 +7,47 @@
 
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
+<div class="row" style="margin-bottom:10px">
     <div class="col-md-6">
         <form id="profile-form" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating col row-xxl" style="color: black; display: flex">
+                <div class="form-floating mb-3" style="width:48%">
+                    <input asp-for="Input.FirstName" class="form-control" autocomplete="firstName" aria-required="true" placeholder="first name" />
+                    <label asp-for="Input.FirstName" class="form-label">First name</label>
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3" style="width:4%"></div>
+                <div class="form-floating mb-3" style="width:48%">
+                    <input asp-for="Input.LastName" class="form-control" autocomplete="lastName" aria-required="true" placeholder="last name" />
+                    <label asp-for="Input.LastName" class="form-label">Last name</label>
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
+            </div>
+            <div>
+                <div class="col" style="display: flex">
+                    <label asp-for="Input.Gender" class="form-label">Gender</label>
+                    <div class="row-md-3" style="display: flex">
+                        <div class="mb-3" style="width:48%">
+                            <input asp-for="Input.Gender" type="radio" id="Male" value="Male" />
+                        </div>
+                        <label asp-for="Input.Gender" class="form-label">Male</label>
+                        <div class="mb-3" style="width:4%"/>
+                        <div class="mb-3" style="width:48%">
+                            <input asp-for="Input.Gender" type="radio" id="Female" value="Female" placeHolder="Female" />
+                        </div>
+                        <label asp-for="Input.Gender" class="form-label">Female</label>
+                    </div>
+                    <span asp-validation-for="Input.Gender" class="text-danger"></span>
+                </div>
+            </div>
             <div class="form-floating mb-3">
                 <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
                 <label asp-for="Username" class="form-label"></label>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+            <div class="form-floating mb-3" style="color: black;">
+                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phoneNumber" placeholder="" />
+                <label asp-for="Input.PhoneNumber" class="form-label">Phone number</label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>

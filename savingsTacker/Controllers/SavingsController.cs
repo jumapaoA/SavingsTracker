@@ -78,6 +78,7 @@ namespace savingsTacker.Controllers
             {
                 Amount = decimal.Parse(Request.Form["Amount"].ToString()),
                 UserId = Request.Form["UserId"].ToString(),
+                Description = Request.Form["Description"].ToString(),
                 DateContributed = currentDate,
                 IsActive = true
             };
@@ -101,12 +102,13 @@ namespace savingsTacker.Controllers
             {
                 return NotFound();
             }
-            _Logger.LogInformation("Line 104: "+savingId);
+
             DateTime currentDate = DateTime.Now;
 
             Saving.DateUpdated = currentDate;
             Saving.UserUpdated = Request.Form["UserId"].ToString();
             Saving.Amount = decimal.Parse(Request.Form["Amount"].ToString());
+            Saving.Description = Request.Form["Description"].ToString();
             Saving.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());
             
             _Savings.UpdateSavings(Saving);

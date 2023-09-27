@@ -49,26 +49,34 @@ namespace savingsTacker.Data.Repositories.DbRepositories
             return SavingsInGroup;
         }
 
-        public GroupSaving? GetGroupSavingsById(int groupSavingId)
+        public GroupSaving? GetGroupSavingsBySavingsId(int savingId)
         {
-            return _DbContext.Set<GroupSaving>().FirstOrDefault(saving => saving.Id == groupSavingId);
+            return _DbContext.Set<GroupSaving>().FirstOrDefault(gs => gs.SavingsId == savingId);
         }
 
-        public void AddGroupSaving(GroupSaving groupSaving, Saving saving)
+        public GroupDetails? GetGroupBySavingsId(int savingsId)
+        {
+            var GroupSavingBelonged = _DbContext.Set<GroupSaving>().FirstOrDefault(saving => saving.SavingsId == savingsId);
+            if (GroupSavingBelonged == null) return null;
+            return _DbContext.Set<GroupDetails>().FirstOrDefault(group => group.Id == GroupSavingBelonged.GroupId);
+        }
+
+        public void AddGroupSaving(GroupSaving groupSaving)
         {
             _DbContext.Set<GroupSaving>().Add(groupSaving);
-            _DbContext.Set<Saving>().Add(saving);
+            Save();
         }
 
-        public void UpdateGroupSaving(GroupSaving groupSaving, Saving saving)
+        public void UpdateGroupSaving(GroupSaving groupSaving)
         {
             _DbContext.Set<GroupSaving>().Update(groupSaving);
-            _DbContext.Set<Saving>().Update(saving);
+            Save();
         }
 
-        public void DeleteGroupSaving(int groupId)
+        public void DeleteGroupSaving(int savingId)
         {
-            _DbContext.Set<GroupSaving>().Remove(GetGroupSavingsById(groupId));
+            _DbContext.Set<GroupSaving>().Remove(GetGroupSavingsBySavingsId(savingId));
+            Save();
         }
 
         public void Save()

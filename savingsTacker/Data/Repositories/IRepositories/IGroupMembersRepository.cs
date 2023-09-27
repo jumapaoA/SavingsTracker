@@ -4,7 +4,7 @@ namespace savingsTacker.Data.Repositories.IRepositories
 {
     public interface IGroupMembersRepository
     {
-        IEnumerable<ApplicationUser> GetMembersByGroupId(int grouId);
+        IEnumerable<GroupMember> GetMembersByGroupId(int grouId);
         IEnumerable<GroupDetails> GetGroupsByUserId(string userId);
         ApplicationUser? GetGroupAdminByGroupId(int groupId);
         GroupMember? GetMemberById(int groupMember);

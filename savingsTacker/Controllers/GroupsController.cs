@@ -53,7 +53,7 @@ namespace savingsTacker.Controllers
 
         [HttpGet]
         [Route("[controller]/members/{id:int}")]
-        public IEnumerable<ApplicationUser> GetMembersByGroupId(int id)
+        public IEnumerable<GroupMember> GetMembersByGroupId(int id)
         {
             var Members = _GroupMember.GetMembersByGroupId(id);
 
@@ -82,10 +82,17 @@ namespace savingsTacker.Controllers
         [Route("[controller]/savings/{groupId:int}")]
         public GroupSaving GetGroupSaving(int groupId) 
         {
-            var Result = _GroupSavings.GetGroupSavingsById(groupId);
+            var Result = _GroupSavings.GetGroupSavingsBySavingsId(groupId);
             return Result;
         }
 
+        [HttpGet]
+        [Route("[controller]/saving/{savingId:int}")]
+        public GroupDetails GetGroupBySavingsId(int savingId)
+        {
+            var Result = _GroupSavings.GetGroupBySavingsId(savingId);
+            return Result;
+        }
         #endregion
 
         #region Create Data for Group Savings
@@ -169,54 +176,39 @@ namespace savingsTacker.Controllers
                 return NotFound();
             }
 
-            Random Random = new Random();
-
             #region Create new savings under a group
             DateTime currentDate = DateTime.Now;
-            int NewSavingsId = Random.Next(0, 1000);
-            var Savings = _Savings.GetSavingsById(NewSavingsId);
 
-            while (Savings != null)
+            var Savings = new Saving()
             {
-                NewSavingsId = Random.Next(0, 1000);
-                Savings = _Savings.GetSavingsById(NewSavingsId);
-            }
-
-            Savings = new Saving()
-            {
-                Id = NewSavingsId,
                 Amount = decimal.Parse(Request.Form["Amount"].ToString()),
                 UserId = Request.Form["UserId"].ToString(),
+                Description = Request.Form["Description"].ToString(),
                 DateContributed = currentDate,
                 IsActive = true
             };
 
             _Savings.AddSaving(Savings);
-            _Logger.LogInformation($"Savings with ID {NewSavingsId} has been listed.");
+            _Logger.LogInformation($"Savings with ID has been listed.");
             #endregion
 
+            var savings = _Savings.GetAllSavings();
+            var latestSaving = savings.OrderByDescending(save => save.Id).FirstOrDefault();
+
             #region Create new group savings data
-            int NewGroupSavingId = Random.Next(0, 1000);
-            var GroupSaving = _GroupSavings.GetGroupSavingsById(NewGroupSavingId);
+            if (latestSaving == null) return NotFound();
 
-            while (GroupSaving != null)
+            var GroupSaving = new GroupSaving()
             {
-                NewGroupSavingId = Random.Next(0, 1000);
-                GroupSaving = _GroupSavings.GetGroupSavingsById(NewGroupSavingId);
-            }
-
-            GroupSaving = new GroupSaving()
-            {
-                Id = NewGroupSavingId,
                 GroupId = groupId,
-                SavingsId = Convert.ToInt32(Request.Form["UserId"].ToString())
+                SavingsId = latestSaving.Id
             };
             #endregion
 
-            _GroupSavings.AddGroupSaving(GroupSaving, Savings);
-            _Logger.LogInformation($"Member with ID {NewGroupSavingId} has been listed.");
+            _GroupSavings.AddGroupSaving(GroupSaving);
+            _Logger.LogInformation($"New group savings has been listed.");
 
-            AddActivity($"Added new group savings with an ID of {NewGroupSavingId}");
+            AddActivity($"Added new group savings.");
 
             return Ok(GroupSaving);
         }
@@ -289,6 +281,65 @@ namespace savingsTacker.Controllers
             AddActivity($"Updated the group member status with an ID of {memberId}");
 
             return Ok(Member);
+        }
+
+        [HttpPatch]
+        [Route("[controller]/update-saving/{savingId:int}")]
+        public IActionResult UpdateGroupSavings(int savingId)
+        {
+            int groupId = Convert.ToInt32(Request.Form["GroupId"].ToString());
+            var group = _GroupDetails.GetGroupDetailById(groupId);
+            var Saving = _Savings.GetSavingsById(savingId);
+            if (Saving == null || group == null)
+            {
+                return NotFound();
+            }
+
+            #region Create new savings under a group
+
+            DateTime currentDate = DateTime.Now;
+
+            Saving.DateUpdated = currentDate;
+            Saving.UserUpdated = Request.Form["UserId"].ToString();
+            Saving.Amount = decimal.Parse(Request.Form["Amount"].ToString());
+            Saving.Description = Request.Form["Description"].ToString();
+            Saving.IsActive = Boolean.Parse(Request.Form["IsActive"].ToString());
+
+            _Savings.UpdateSavings(Saving);
+
+            _Logger.LogInformation($"Savings with ID has been listed.");
+
+            #endregion
+
+            #region Create new group savings data
+
+            var GroupSaving = _GroupSavings.GetGroupSavingsBySavingsId(savingId);
+
+            if(GroupSaving == null)
+            {
+                GroupSaving = new GroupSaving()
+                {
+                    GroupId = groupId,
+                    SavingsId = Saving.Id
+                };
+                _GroupSavings.AddGroupSaving(GroupSaving);
+            }
+            else
+            {
+                GroupSaving.GroupId = groupId;
+                GroupSaving.SavingsId = Saving.Id;
+
+                _GroupSavings.UpdateGroupSaving(GroupSaving);
+            }
+            
+
+            #endregion
+
+            _Logger.LogInformation($"You updated a group savings.");
+
+            AddActivity($"Added new group savings.");
+
+            return Ok(GroupSaving);
         }
 
         #endregion

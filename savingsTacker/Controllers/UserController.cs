@@ -64,7 +64,7 @@ namespace savingsTacker.Controllers
 
         [HttpGet]
         [Route("[controller]/group-members/{groupId:int}")]
-        public IEnumerable<ApplicationUser> GetMembersByGroup(int groupId)
+        public IEnumerable<GroupMember> GetMembersByGroup(int groupId)
         {
             return _GroupMember.GetMembersByGroupId(groupId);
         }

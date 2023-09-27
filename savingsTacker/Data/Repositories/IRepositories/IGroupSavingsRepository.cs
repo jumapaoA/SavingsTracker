@@ -6,9 +6,10 @@ namespace savingsTacker.Data.Repositories.IRepositories
     {
         IEnumerable<Saving> GetSavingsByGroupId(int groupId);
         IEnumerable<Saving> GetAllGroupSavingsByUserId(string userId);
-        GroupSaving? GetGroupSavingsById(int groupSavingId);
-        void AddGroupSaving(GroupSaving groupSaving, Saving saving);
-        void UpdateGroupSaving(GroupSaving groupSaving, Saving saving);
+        GroupSaving? GetGroupSavingsBySavingsId(int savingId);
+        GroupDetails? GetGroupBySavingsId(int groupSavingId);
+        void AddGroupSaving(GroupSaving groupSaving);
+        void UpdateGroupSaving(GroupSaving groupSaving);
         void DeleteGroupSaving(int groupId);
         void Save();
     }

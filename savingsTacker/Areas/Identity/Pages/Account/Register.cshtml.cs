@@ -56,13 +56,13 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required(ErrorMessage = "First name is required")]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [StringLength(100, ErrorMessage = "First name must be {2} to {1} characters long.", MinimumLength = 2)]
             [DataType(DataType.Text)]
             [Display(Name = "FirstName")]
             public string FirstName { get; set; }
 
             [Required(ErrorMessage = "Last name is required")]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [StringLength(100, ErrorMessage = "Last name must be {2} to {1} characters long.", MinimumLength = 2)]
             [DataType(DataType.Text)]
             [Display(Name = "LastName")]
             public string LastName { get; set; }

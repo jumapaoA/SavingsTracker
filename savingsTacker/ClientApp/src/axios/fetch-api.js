@@ -1,5 +1,12 @@
 ﻿import axios from 'axios';
+import authService from '../components/api-authorization/AuthorizeService';
 
+
+export async function UserId() {
+    const [user] = await Promise.all([authService.getUser()]);
+
+    return user;
+}
   //////////////////////////////////////////////////////////////////////////////////
  ///                           User Functions                                    //
 //////////////////////////////////////////////////////////////////////////////////
@@ -210,6 +217,15 @@ export async function FetchGroupSavingsById(groupId) {
     return null;
 }
 
+export async function FetchGroupBySavingsId(savingId) {
+    const response = await axios.get(`/groups/saving/${savingId}`);
+    if (response.status === 200) {
+        return response.data;
+    }
+
+    return null;
+}
+
 export async function CreateGroup(form) {
     const response = fetch(`/groups/create`, {
         method: 'POST',
@@ -234,8 +250,11 @@ export async function CreateGroupMember(groupId) {
     return null;
 }
 
-export async function CreateGroupSavings(groupId) {
-    const response = await axios.post(`/groups/add-saving/${groupId}`);
+export async function CreateGroupSavings(groupId, form) {
+    const response = fetch(`/groups/add-saving/${groupId}`, {
+        method: 'POST',
+        body: form
+    })
 
     if (response.status === 200 || response.status === 204) {
         console.log(response.data);
@@ -280,6 +299,19 @@ export async function UpdateMemberStatus(memberId) {
     return null;
 }
 
+export async function UpdateGroupSavings(savingId, form) {
+    const response = fetch(`/groups/update-saving/${savingId}`, {
+        method: 'PATCH',
+        body: form
+    });
+
+    if (response.status === 200 || response.status === 204) {
+        console.log(response.data);
+        return response.data;
+    }
+
+    return null;
+}
   //////////////////////////////////////////////////////////////////////////////////
  ///                             Activity Functions                              //
 //////////////////////////////////////////////////////////////////////////////////
@@ -291,3 +323,5 @@ export async function FetchActivityLog(userId) {
 
     return null;
 }
+
+

@@ -13,19 +13,14 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import { SavingsTable } from './Savings';
 
-import {
-    FetchUsers, FetchUserById, FetchUserBySavingsId, FetchMembersByGroupId, UpdateUserProfile, UpdateUserStatus,
-    UpdateUserProfilePicture, FetchSavings, FetchSavingsByUserId, FetchSavingsBySavingId, FetchSavingsByGroupId,
-    FetchGroupSavingsByUserId, CreateSaving, UpdateSavings, FetchGroups, FetchGroupDetailByGroupId, FetchGroupsByUserId,
-    FetchGroupSavingsById, CreateGroup, CreateGroupMember, CreateGroupSavings, UpdateGroup, UpdateAdminMember,
-    UpdateMemberStatus, FetchActivityLog } from '../axios/fetch-api';
+import { FetchSavingsByUserId } from '../axios/fetch-api';
 
 function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
+            <Link color="inherit" href="https://fullscale.io/">
+                Full Scale
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -33,47 +28,14 @@ function Copyright(props) {
     );
 }
 
-function testAPICall() {
-    const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
-    const intIDs = 1;
-
-    FetchUsers();
-    FetchUserById(userId);
-    FetchUserBySavingsId(intIDs);
-    FetchMembersByGroupId(intIDs);
-    //UpdateUserProfile(userId);
-    //UpdateUserStatus(userId);
-    //UpdateUserProfilePicture(userId);
-
-    FetchSavings();
-    FetchSavingsByUserId(userId);
-    FetchSavingsBySavingId(intIDs);
-    FetchSavingsByGroupId(intIDs);
-    FetchGroupSavingsByUserId(userId);
-    //CreateSaving();
-    ///UpdateSavings(intIDs);
-
-    FetchGroups();
-    FetchGroupDetailByGroupId(intIDs);
-    FetchGroupsByUserId(userId);
-    FetchGroupSavingsById(intIDs);
-    //CreateGroup();
-    //CreateGroupMember(userId);
-    //CreateGroupSavings(userId);
-   // UpdateGroup(userId);
-    //UpdateAdminMember(userId);
-    //UpdateMemberStatus(userId);
-
-    FetchActivityLog(userId);
+function preventDefault() {
 }
+
 
 export default function Dashboard() {
     const [rows, setRows] = useState([]);
 
     useEffect(() => {
-
-        testAPICall();
-
         FetchSavingsByUserId("a0cf219d-6bdb-444f-8013-76a7fd4c4fa1")
             .then(response => setRows(response));
     }, []);
@@ -91,7 +53,7 @@ export default function Dashboard() {
                             height: 240,
                         }}
                     >
-                        <Chart />
+                        <Chart row={rows} />
                     </Paper>
                 </Grid>
                 {/* Recent Deposits */}
@@ -110,7 +72,7 @@ export default function Dashboard() {
                 {/* Recent Savings */}
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                        <SavingsTable rows={ rows} />
+                        <SavingsTable rows={rows} setSelectedRow={preventDefault} setRowIsClick={preventDefault} />
                     </Paper>
                 </Grid>
             </Grid>

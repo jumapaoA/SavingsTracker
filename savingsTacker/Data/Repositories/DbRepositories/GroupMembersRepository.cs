@@ -14,23 +14,26 @@ namespace savingsTacker.Data.Repositories.DbRepositories
             _DbContext = DbContext;
         }
 
-        public IEnumerable<ApplicationUser> GetMembersByGroupId(int grouId)
+        public IEnumerable<GroupMember> GetMembersByGroupId(int grouId)
         {
-            var ListOfUserId = _DbContext.Set<GroupMember>().Where(group => group.GroupId == grouId);
-            IEnumerable<ApplicationUser> members = new List<ApplicationUser>();
+            var ListOfUsers = _DbContext.Set<GroupMember>().Where(group => group.GroupId == grouId);
+            var Members = new List<ApplicationUser>();
 
-            foreach(var member in ListOfUserId) 
+            foreach(var member in ListOfUsers) 
             {
                 var Result = _DbContext.Set<ApplicationUser>().FirstOrDefault(User => User.Id == member.UserId);
+                if(Result != null)
+                    Members.Add(Result);
             }
 
-            return members;
+            return ListOfUsers;
         }
 
         public IEnumerable<GroupDetails> GetGroupsByUserId(string userId)
         {
             var UserGroups = _DbContext.Set<GroupMember>().Where(group => group.UserId.Equals(userId));
             var Groups = new List<GroupDetails>();
+            var DestinctGroups = new List<GroupDetails>();
 
             foreach(var Group in UserGroups)
             {
@@ -39,7 +42,10 @@ namespace savingsTacker.Data.Repositories.DbRepositories
                     Groups.Add(Result);
             }
 
-            return Groups;
+            var AllGroups = _DbContext.Set<GroupDetails>().Where(group => group.GroupCreator.Equals(userId));
+            Groups.AddRange(AllGroups);
+            DestinctGroups.AddRange(Groups.DistinctBy(groups => groups.Id));
+            return DestinctGroups;
         }
 
         public ApplicationUser? GetGroupAdminByGroupId(int groupId)

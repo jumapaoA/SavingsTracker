@@ -4,7 +4,6 @@ import { Container } from 'reactstrap';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
@@ -13,7 +12,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import AutoDeleteOutlinedIcon from '@mui/icons-material/AutoDeleteOutlined';
 import Alert from '@mui/material/Alert';
@@ -203,9 +201,6 @@ export function AddGroupDialog({ open, setOpen }) {
         const value = event.target.value;
         const eventName = event.target.name;
 
-        console.log(value);
-        console.log(eventName);
-
         if (eventName === "name")
             setName(value);
         else
@@ -219,9 +214,6 @@ export function AddGroupDialog({ open, setOpen }) {
             eventName === "name" ? setNameInvalid(false) : setDescriptionInvalid(false);
         }
 
-
-        console.log("nameInvalid: " + nameInvalid);
-        console.log("descriptionInvalid: " + descriptionInvalid);
     }
 
     function addGroup(active) {

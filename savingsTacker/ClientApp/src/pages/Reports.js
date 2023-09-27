@@ -1,12 +1,14 @@
 ﻿import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Container } from 'reactstrap';
 import Alert from '@mui/material/Alert';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import IconButton from '@mui/material/IconButton';
+import PrintTwoToneIcon from '@mui/icons-material/PrintTwoTone';
 import Swal from 'sweetalert2';
 
 import { FetchGroupsByUserId, FetchMembersByGroupId, FetchSavingsByGroupId, FetchSavingsByUserId, FetchUsers } from '../axios/fetch-api';
@@ -19,15 +21,16 @@ export default function Reports() {
     const [selectedGroup, setSelectedGroup] = React.useState([]);
     const [savings, setSavings] = useState([]);
     const [groups, setGroups] = useState([]);
+    const [dataRow, setDataRow] = useState([]);
     const tabs = [
         {
-            id: 0, title: 'Savings', content: <SavingsTable savings={savings} selectedGroup={selectedGroup} />
+            id: 0, title: 'Savings', content: <SavingsTable savings={savings} selectedGroup={selectedGroup} setData={setDataRow} />
         },
         {
-            id: 1, title: 'Groups', content: <GroupsTable groups={groups} />
+            id: 1, title: 'Groups', content: <GroupsTable groups={groups} setData={setDataRow} />
         },
         {
-            id: 2, title: 'Group Members', content: <MembersTable />
+            id: 2, title: 'Group Members', content: <MembersTable selectedGroup={selectedGroup} setData={setDataRow} />
         },
     ];
 
@@ -40,7 +43,12 @@ export default function Reports() {
         FetchGroupsByUserId(userId).then(response => setGroups(response));
     }, []);
 
+    useEffect(() => {
+
+    }, [dataRow]);
+
     const handleChange = (event, newValue) => {
+        setSelectedGroup([]);
         setActiveTab(newValue);
     };
 
@@ -54,17 +62,18 @@ export default function Reports() {
         }
     }
 
+
     return (
         <div>
             <div className="flex-column">
-                <Tabs value={activeTab} onChange={handleChange} centered>
+                <Tabs value={activeTab} onChange={handleChange} >
                     {
                         tabs.map(tab => {
                             return <Tab label={tab.title} key={tab.id} />
                         })
                     }
                 </Tabs>
-                <div className="dashboard-header" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                <div className="dashboard-header" style={{ display: 'flex', flexDirection: 'row', alignItems:'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                     <h2 style={{ margin: '1em' }}>Groups</h2>
                 </div>
 
@@ -98,7 +107,7 @@ export default function Reports() {
 }
 
 
-export function SavingsTable({ savings, selectedGroup }) {
+export function SavingsTable({ savings, selectedGroup, setData }) {
     const [users, setUsers] = useState([]);
     const [dataRow, setDataRow] = useState(savings);
     const defaultDate = 'February 1, 1';
@@ -160,6 +169,10 @@ export function SavingsTable({ savings, selectedGroup }) {
     }, [savings]);
 
     useEffect(() => {
+        setData(dataRow);
+    }, [dataRow]);
+
+    useEffect(() => {
         if (selectedGroup) {
             const id = selectedGroup.id;
             if (id) {
@@ -208,13 +221,14 @@ export function SavingsTable({ savings, selectedGroup }) {
                     },
                 }}
                 pageSizeOptions={[10, 50, 100]}
-                disableSelectionOnClick={true }
+                disableSelectionOnClick={true}
+                slots={{ toolbar: GridToolbar }}
             />
         </div>
     );
 }
 
-export function GroupsTable({ groups }) {
+export function GroupsTable({ groups, setData }) {
     const [users, setUsers] = useState([]);
     const defaultDate = 'February 1, 1';
     const columns = [
@@ -254,6 +268,7 @@ export function GroupsTable({ groups }) {
     ];
 
     useEffect(() => {
+        setData(groups);
         FetchUsers().then((response) => {
             setUsers(response);
         });
@@ -290,13 +305,124 @@ export function GroupsTable({ groups }) {
                     },
                 }}
                 pageSizeOptions={[5, 10]}
+                slots={{ toolbar: GridToolbar }}
             />
         </div>
     );
 }
 
-function MembersTable() {
+export function MembersTable({ selectedGroup, setData }) {
+    const [users, setUsers] = useState([]);
+    const [dataRow, setDataRow] = useState([]);
+    const [showMessage, setShowMessage] = useState(true);
+    const defaultDate = 'February 1, 1';
+    const columns = [
+        {
+            field: 'userId', headerName: 'Contributor', width: 200,
+            valueGetter: (params) => {
+                const userId = params.row.userId;
+                return getUsername(userId);
+            },
+        },
+        {
+            field: 'isAdmin', headerName: 'Status', width: 100,
+            valueGetter: (params) => {
+                const status = params.row.isAdmin;
+                return status ? 'Yes' : 'No';
+            },
+        },
+        {
+            field: 'dateAdded', headerName: 'Date Joined', width: 200,
+            valueGetter: (params) => {
+                const date = params.row.dateAdded;
+                const formattedAddedDate = formatDate(date, true);
+                return formattedAddedDate === defaultDate ? '' : formattedAddedDate;
+            },
+        },
+        {
+            field: 'dateRemoved', headerName: 'Date Removed', width: 200,
+            valueGetter: (params) => {
+                const date = params.row.dateRemoved;
+                const formattedUpdatedDate = formatDate(date);
+                return formattedUpdatedDate === defaultDate ? '' : formattedUpdatedDate;
+            },
+        },
+        {
+            field: 'isActive', headerName: 'Status', width: 100,
+            valueGetter: (params) => {
+                const status = params.row.isActive;
+                return status ? 'Active' : 'Inactive';
+            },
+        },
+    ];
+
+    useEffect(() => {
+        FetchUsers().then((response) => {
+            setUsers(response);
+        });
+    }, []);
+
+    useEffect(() => {
+        setData(dataRow);
+    });
+
+    useEffect(() => {
+        if (selectedGroup) {
+            const id = selectedGroup.id;
+            if (id) {
+                setShowMessage(false);
+                FetchMembersByGroupId(id)
+                    .then(response => {
+                        console.log(response);
+                        setDataRow(response);
+                    });
+            }
+            else
+                setShowMessage(true);
+        }
+    }, [selectedGroup]);
+
+    function getUsername(userId) {
+        if (!userId) {
+            return;
+        }
+        const foundUser = users.find(user => user.id === userId);
+        return foundUser ? `${foundUser.firstName} ${foundUser.lastName}` : '';
+    }
+
+    function formatDate(dateString) {
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        const date = new Date(dateString);
+        const mm = months[date.getMonth() + 1];
+        const dd = date.getDate();
+        const yyyy = date.getFullYear();
+        const stringDate = `${mm} ${dd}, ${yyyy}`;
+
+        return stringDate;
+    }
+
     return (
-        <>hehe</>
-    )
+        <div style={{ height: showMessage? 100: 400, width: '100%' }}>
+            {
+                showMessage?
+                    <Alert variant="filled" severity="info">
+                        Select a group first to view list of members of that group - check it out!
+                    </Alert>
+                    :
+                    <DataGrid
+                        rows={dataRow}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 10 },
+                            },
+                        }}
+                        pageSizeOptions={[10, 50, 100]}
+                        disableSelectionOnClick={true}
+                        slots={{ toolbar: GridToolbar }} 
+                    />
+            }
+        </div>
+    );
 }

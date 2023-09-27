@@ -2,9 +2,6 @@ import Dashboard from './pages/Dashboard';
 import ApiAuthorzationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import Contributor from "./components/Contributor";
 import { FetchData } from "./components/FetchData";
-import Home from "./components/Home";
-
-import Chart from './pages/Chart';
 import ActivityLog from './pages/ActivityLog';
 import Reports from './pages/Reports';
 import Savings from './pages/Savings';
@@ -12,14 +9,17 @@ import Savings from './pages/Savings';
 const AppRoutes = [
     {
         index: true,
+        requireAuth: true,
         element: <Dashboard />
     },
     {
         path: '/saving',
+        requireAuth: true,
         element: <Savings />
     },
     {
         path: '/contributor',
+        requireAuth: true,
         element: <Contributor />
     },
     {
@@ -28,6 +28,7 @@ const AppRoutes = [
     },
     {
         path: '/reports',
+        requireAuth: true,
         element: <Reports />
     },
     {
