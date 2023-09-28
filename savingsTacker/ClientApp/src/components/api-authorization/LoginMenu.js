@@ -64,7 +64,7 @@ export class LoginMenu extends Component {
                 <NavLink tag={Link} className="text-light" to={profilePath} title='Profile'>{userFullname}</NavLink>
             </NavItem>
             <NavItem style={{ listStyleType: 'none' }}>
-                <NavLink replace tag={Link} className="text-light" to={logoutPath} state={logoutState}>Logout</NavLink>
+                <NavLink replace tag={Link} className="text-light" to={logoutPath} state={logoutState} >Logout</NavLink>
             </NavItem>
         </Fragment>);
     }
