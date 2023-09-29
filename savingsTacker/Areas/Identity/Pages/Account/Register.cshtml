@@ -4,94 +4,64 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="row">
-    <div class="col-md-4 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
-                                article
-                                about setting up this ASP.NET application to support logging in via external services
-                            </a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
-    </div>
-    <div class="col-md-6">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h4 style="text-align:center">REGISTRATION FORM</h4>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating col row-xxl" style="color: black; display: flex">
-                <div class="form-floating mb-3" style="width:48%">
-                    <input asp-for="Input.FirstName" class="form-control" aria-required="true" placeholder="first name" />
-                    <label asp-for="Input.FirstName" class="form-label">First name</label>
-                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3" style="width:4%"></div>
-                <div class="form-floating mb-3" style="width:48%">
-                    <input asp-for="Input.LastName" class="form-control" autocomplete="username" aria-required="true" placeholder="last name" />
-                    <label asp-for="Input.LastName" class="form-label">Last name</label>
-                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                </div>
+<div class="center">
+    <h1>Registration form</h1>
+    <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <div style="display:flex">
+            <div class="txt_field" style="max-width:155px">
+                <input asp-for="Input.FirstName" type="text" required>
+                <span asp-validation-for="Input.FirstName"></span>
+                <label asp-for="Input.FirstName">First name</label>
             </div>
-            <div class="form-floating mb-3" style="color: black">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email" class="form-label">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            <div class="form-floating mb-3" style="width:4%"></div>
+            <div class="txt_field" style="max-width:155px">
+                <input asp-for="Input.LastName" type="text" required>
+                <span asp-validation-for="Input.LastName" style="margin-bottom:-25px"></span>
+                <label asp-for="Input.LastName">Last name</label>
             </div>
-            <div>
-                <div class="col-md-3" style="display: flex">
-                    <label asp-for="Input.Gender" class="form-label">Gender</label>
-                    <div class="row-md-3" style="display: flex">
-                        <div class="form-check form-check-inline mb-3" style="width:48%">
-                            <input asp-for="Input.Gender" type="radio" id="Male" value="Male" />
-                        </div>
-                        <div class="mb-3" style="width:48%">
-                            <input asp-for="Input.Gender" type="radio" id="Female" value="Female" placeHolder="Female"/>
-                        </div>
-                    </div>
-                    <span asp-validation-for="Input.Gender" class="text-danger"></span>
+        </div>
+        <div class="txt_field">
+            <input asp-for="Input.Email" type="text" autocomplete="username" required>
+            <span asp-validation-for="Input.Email"></span>
+            <label asp-for="Input.Email">Email</label>
+        </div>
+        <div>
+            <div style="display:flex">
+                <div style="color:#2691d9">
+                    <label asp-for="Input.Gender">Gender</label>
                 </div>
+                <div style="color:#adadad; margin-left:20px">
+                    <input asp-for="Input.Gender" type="radio" id="Male" value="Male" />
+                    <label asp-for="Input.Gender">Male</label>
+                </div>
+                <div class="form-floating mb-3" style="width:15%"></div>
+                <div style="color:#adadad">
+                    <input asp-for="Input.Gender" type="radio" id="Female" value="Female" />
+                    <label asp-for="Input.Gender">Female</label>
+                </div>            
             </div>
-            
-            <div class="row-md-3" style="color: black; display: flex">
-                <div class="form-floating mb-3" style="width:48%">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password">Password</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3" style="width:4%"></div>
-                <div class="form-floating mb-3" style="width:48%">
-                    <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                </div>
+            <span asp-validation-for="Input.Gender" style="text-decoration: none; color: red; font-size: 12px;"></span>
+        </div>
+
+        <div style="display:flex">
+            <div class="txt_field" style="max-width:155px">
+                <input asp-for="Input.Password" type="text" required>
+                <span asp-validation-for="Input.Password"></span>
+                <label asp-for="Input.Password">Password</label>
             </div>
-            
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
+            <div class="form-floating mb-3" style="width:4%"></div>
+            <div class="txt_field" style="max-width:155px">
+                <input asp-for="Input.ConfirmPassword" type="text" required>
+                <span asp-validation-for="Input.ConfirmPassword"></span>
+                <label asp-for="Input.ConfirmPassword"> name</label>
+            </div>
+        </div>
+
+        <input type="submit" value="register">
+        <div class="signup_link">
+            Already have an account? <a asp-page="./Login">Login</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

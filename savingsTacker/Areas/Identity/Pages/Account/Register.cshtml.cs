@@ -55,37 +55,39 @@ namespace savingsTacker.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required(ErrorMessage = "First name is required")]
+            [Required(ErrorMessage = "First name is required.")]
             [StringLength(100, ErrorMessage = "First name must be {2} to {1} characters long.", MinimumLength = 2)]
             [DataType(DataType.Text)]
             [Display(Name = "FirstName")]
             public string FirstName { get; set; }
 
-            [Required(ErrorMessage = "Last name is required")]
+            [Required(ErrorMessage = "Last name is required.")]
             [StringLength(100, ErrorMessage = "Last name must be {2} to {1} characters long.", MinimumLength = 2)]
             [DataType(DataType.Text)]
             [Display(Name = "LastName")]
             public string LastName { get; set; }
 
-            [Required(ErrorMessage = "Email is required")]
-            [EmailAddress]
+            [Required(ErrorMessage = "Email is required.")]
+            [EmailAddress(ErrorMessage = "Provide a valid e-mail address.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required(ErrorMessage = "Gender is required")]
+            [Required(ErrorMessage = "Gender is required.")]
             [Display(Name = "Gender")]
             public string Gender { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage ="Password is required.")]
+            [StringLength(100, ErrorMessage = "Password must be 6 to 10 characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
+            [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).+$",
+            ErrorMessage = "Password must contain the following: <br/>one uppercase letter; <br/>one lowercase letter; <br/>one number; and <br/>one special character")]
             public string Password { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Compare("Password", ErrorMessage = "The password and confirm password do not match.")]
             public string ConfirmPassword { get; set; }
         }
 

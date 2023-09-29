@@ -49,7 +49,8 @@ export class LoginMenu extends Component {
         if (!isAuthenticated) {
             const registerPath = `${ApplicationPaths.Register}`;
             const loginPath = `${ApplicationPaths.Login}`;
-            return this.anonymousView(registerPath, loginPath);
+            //return this.anonymousView(registerPath, loginPath);
+            return <div/>;
         } else {
             const profilePath = `${ApplicationPaths.Profile}`;
             const logoutPath = `${ApplicationPaths.LogOut}`;

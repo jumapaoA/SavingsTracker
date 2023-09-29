@@ -81,8 +81,7 @@ export default function MavMenu({ children }) {
                             <NotificationsIcon />
                         </Badge>
                     </IconButton>
-                    <LoginMenu>
-                    </LoginMenu>
+                    <LoginMenu />
                 </Toolbar>
             </AppBar>
 

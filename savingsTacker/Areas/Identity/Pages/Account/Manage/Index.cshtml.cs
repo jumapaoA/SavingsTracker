@@ -50,9 +50,9 @@ namespace savingsTacker.Areas.Identity.Pages.Account.Manage
             public string Gender { get; set; }
 
             [Phone]
-            //[RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
-            [RegularExpression(@"^(?:\+639\d{9}|09\d{9})$", ErrorMessage = "Invalid phone number format.")]
+            [RegularExpression(@"^(?:\+639\d{9}|09\d{9})$", ErrorMessage = "Invalid phone number format (+639/09).")]
             [Display(Name = "Phone number")]
+            [StringLength(13, ErrorMessage = "Phone number must be 11 (09) or  13 (+639) characters long.", MinimumLength = 11)]
             public string PhoneNumber
             {
                 get; set;
