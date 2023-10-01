@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
 
 namespace savingsTacker.Areas.Identity.Pages.Account
@@ -18,55 +19,36 @@ namespace savingsTacker.Areas.Identity.Pages.Account
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITokensRepository _token;
 
-        public ResetPasswordModel(UserManager<ApplicationUser> userManager)
+        public ResetPasswordModel(UserManager<ApplicationUser> userManager, ITokensRepository token)
         {
             _userManager = userManager;
+            _token = token;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [EmailAddress]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Password is required.")]
+            [StringLength(100, ErrorMessage = "Password must be 6 to 10 characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
+            [Display(Name = "Password")]
+            [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).+$",
+            ErrorMessage = "Password must contain the following: <br/>one uppercase letter; <br/>one lowercase letter; <br/>one number; and <br/>one special character")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             public string Code { get; set; }
 
@@ -84,6 +66,13 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                 {
                     Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
                 };
+
+                var tokenExist = _token.GetTokenByToken(Input.Code);
+                if(tokenExist != null)
+                {
+                    return RedirectToPage("./ErrorPage");
+                }
+
                 return Page();
             }
         }
@@ -94,6 +83,13 @@ namespace savingsTacker.Areas.Identity.Pages.Account
             {
                 return Page();
             }
+
+            var token = new Tokens()
+            {
+                Token = Input.Code,
+                DateTime = DateTime.Now
+            };
+            _token.AddToken(token);
 
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
@@ -111,6 +107,10 @@ namespace savingsTacker.Areas.Identity.Pages.Account
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
+                if (error.Code.Equals("InvalidToken"))
+                {
+                    return RedirectToPage("./ErrorPage");
+                }
             }
             return Page();
         }

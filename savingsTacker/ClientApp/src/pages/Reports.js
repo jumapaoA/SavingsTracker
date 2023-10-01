@@ -1,5 +1,4 @@
 ﻿import React, { useEffect, useState } from 'react';
-import Paper from '@mui/material/Paper';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Container } from 'reactstrap';
 import Alert from '@mui/material/Alert';
@@ -7,21 +6,15 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import IconButton from '@mui/material/IconButton';
-import PrintTwoToneIcon from '@mui/icons-material/PrintTwoTone';
-import Swal from 'sweetalert2';
 
-import { FetchGroupsByUserId, FetchMembersByGroupId, FetchSavingsByGroupId, FetchSavingsByUserId, FetchUsers } from '../axios/fetch-api';
-
-const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
-//const userId = "ab8ebde1-5431-42e0-9db0-ba001529ca1f";
+import { UserId, FetchGroupsByUserId, FetchMembersByGroupId, FetchSavingsByGroupId, FetchSavingsByUserId, FetchUsers } from '../axios/fetch-api';
 
 export default function Reports() {
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroup, setSelectedGroup] = React.useState([]);
     const [savings, setSavings] = useState([]);
     const [groups, setGroups] = useState([]);
-    const [dataRow, setDataRow] = useState([]);
+    const [userId, setUserId] = useState("");
     const tabs = [
         {
             id: 0, title: 'Savings', content: <SavingsTable savings={savings} selectedGroup={selectedGroup} />
@@ -35,13 +28,22 @@ export default function Reports() {
     ];
 
     useEffect(() => {
-        FetchSavingsByUserId(userId)
+        UserId()
             .then(response => {
-                setSavings(response);
+                setUserId(response.sub)
             });
-
-        FetchGroupsByUserId(userId).then(response => setGroups(response));
     }, []);
+
+    useEffect(() => {
+        if (UserId) {
+            FetchSavingsByUserId(userId)
+                .then(response => {
+                    setSavings(response);
+                });
+
+            FetchGroupsByUserId(userId).then(response => setGroups(response));
+        }
+    }, [userId]);
 
     const handleChange = (event, newValue) => {
         setSelectedGroup([]);
@@ -70,7 +72,7 @@ export default function Reports() {
                     }
                 </Tabs>
                 <div className="dashboard-header" style={{ display: 'flex', flexDirection: 'row', alignItems:'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                    <h2 style={{ margin: '1em' }}>Groups</h2>
+                    <h2 style={{ margin: '1em' }}>Reports</h2>
                 </div>
 
                 <div style={{ backgroundColor: '#F4F4F4' }}>

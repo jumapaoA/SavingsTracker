@@ -12,12 +12,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
 
 namespace savingsTacker.Areas.Identity.Pages.Account
@@ -30,13 +32,15 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IActivityLogRepository _activityLogRepository;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IActivityLogRepository activityLog)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +48,7 @@ namespace savingsTacker.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _activityLogRepository = activityLog;
         }
 
         [BindProperty]
@@ -52,6 +57,8 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         public string ReturnUrl { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
+
+        public bool IsUserExist { get; set; }
 
         public class InputModel
         {
@@ -89,6 +96,7 @@ namespace savingsTacker.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirm password do not match.")]
             public string ConfirmPassword { get; set; }
+
         }
 
 
@@ -102,8 +110,8 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
             _logger.LogInformation("ModelState.IsValid is " + ModelState.IsValid);
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -116,17 +124,15 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
-                _logger.LogInformation("Before adding other entities");
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.Gender = Input.Gender;
                 user.IsActive = true;
 
-                _logger.LogInformation("After adding other entities");
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
                 if (result.Succeeded)
                 {
+                    IsUserExist = false;
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
@@ -138,8 +144,17 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    await _emailSender.SendEmailAsync(Input.Email, "Confirm email account",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    var activityLog = new ActivityLog()
+                    {
+                        Message = "Your created an account",
+                        UserId = user.Id,
+                        DateAccess = DateTime.Now
+                    };
+
+                    _activityLogRepository.AddActivity(activityLog);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -151,12 +166,17 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
+                    if (error.Code.Equals("DuplicateUserName"))
+                    {
+                        IsUserExist = true;
+                    }
                 }
-            }
 
+            }
             // If we got this far, something failed, redisplay form
             return Page();
         }
@@ -182,6 +202,12 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
+        }
+
+        public async Task onChangeEmail()
+        {
+            IsUserExist = false;
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
     }
 }

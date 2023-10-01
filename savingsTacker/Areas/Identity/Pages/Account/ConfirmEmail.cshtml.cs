@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
 
 namespace savingsTacker.Areas.Identity.Pages.Account
@@ -18,32 +19,44 @@ namespace savingsTacker.Areas.Identity.Pages.Account
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITokensRepository _token;
 
-        public ConfirmEmailModel(UserManager<ApplicationUser> userManager)
+        public ConfirmEmailModel(UserManager<ApplicationUser> userManager, ITokensRepository token)
         {
             _userManager = userManager;
+            _token = token;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
         public async Task<IActionResult> OnGetAsync(string userId, string code)
         {
             if (userId == null || code == null)
             {
-                return RedirectToPage("/Index");
+                return RedirectToPage("./Login");
             }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{userId}'.");
+                return RedirectToPage("./ErrorPage");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+
+            var tokenExist = _token.GetTokenByToken(code);
+            if (tokenExist != null)
+            {
+                return RedirectToPage("./ErrorPage");
+            }
+
+            var token = new Tokens()
+            {
+                Token = code,
+                DateTime = DateTime.Now
+            };
+            _token.AddToken(token);
+
             var result = await _userManager.ConfirmEmailAsync(user, code);
             StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
             return Page();

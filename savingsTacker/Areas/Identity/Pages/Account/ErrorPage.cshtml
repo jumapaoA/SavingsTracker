@@ -1,7 +1,7 @@
 ﻿@page
-@model ErrorModel
+
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "ErrorPage";
 }
 
 <style>
@@ -86,11 +86,16 @@
 <div class="error-page">
     <div class="content">
         <h1 data-text="404">404</h1>
-        <h4 data-text="Opps! Page not found">Opps! Page not found</h4d>
-        <p>Sorry, the page you're looking for doesn't exist. (You might also tried using expired token.)</p>
+        <h4 data-text="Opps! Page not found">Opps! Page not found</h4>
+        <p>Sorry, the page you're looking for doesn't exist. </p>
+        <p>(You might also tried using expired token.)</p>
         <div class="btns">
             <a href="/">return home</a>
-            <a href="/">report</a>
+            <a href="https://gigabook-inc-cebu.gigabook.com/book/alyssa-jumapao/video-call">report</a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -19,5 +19,6 @@ namespace savingsTacker.Data
         public DbSet<GroupMember> GroupMembers { get; set; }
         public DbSet<GroupSaving> GroupSavings { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
+        public DbSet<Tokens> Tokens { get; set; }
     }
 }

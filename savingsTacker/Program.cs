@@ -7,8 +7,17 @@ using savingsTacker.Data.Repositories.DbRepositories;
 using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using savingsTacker.Services;
+using System.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+IConfiguration Configuration = new ConfigurationBuilder()
+    .SetBasePath(Environment.CurrentDirectory)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .Build();
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -36,7 +45,16 @@ builder.Services.AddTransient<IGroupDetailsRepository, GroupDetailsRepository>()
 builder.Services.AddTransient<IGroupMembersRepository, GroupMembersRepository>();
 builder.Services.AddTransient<IGroupSavingsRepository, GroupSavingsRepository>();
 builder.Services.AddTransient<IActivityLogRepository, ActivityLogRepository>();
+builder.Services.AddTransient<ITokensRepository, TokensRepository>();
 
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(Configuration);
+
+builder.Services.ConfigureApplicationCookie(o =>
+{
+    o.ExpireTimeSpan = TimeSpan.FromDays(3);
+    o.SlidingExpiration = true;
+});
 
 // SWAGGER FOR BACKEND DOCUMENTATION
 builder.Services.AddSwaggerGen(c =>

@@ -121,7 +121,10 @@ export class Login extends Component {
     const redirectUrl = `${window.location.origin}/${apiAuthorizationPath}`;
     // It's important that we do a replace here so that when the user hits the back arrow on the
     // browser they get sent back to where it was on the app instead of to an endpoint on this
-    // component.
+      // component.
+      if (redirectUrl.endsWith("undefined"))
+          window.location.replace(`${window.location.origin}/`);
+
     window.location.replace(redirectUrl);
   }
 

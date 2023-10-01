@@ -17,7 +17,7 @@ import AutoDeleteOutlinedIcon from '@mui/icons-material/AutoDeleteOutlined';
 import Alert from '@mui/material/Alert';
 import Swal from 'sweetalert2';
 
-import { UserId, FetchUsers, UpdateGroup, CreateGroup, FetchGroupsByCreator } from '../axios/fetch-api';
+import { UserId, UpdateGroup, CreateGroup, FetchGroupsByCreator } from '../axios/fetch-api';
 
 export default function Contributor() {
     const [groups, setGroups] = useState([]);
@@ -25,6 +25,7 @@ export default function Contributor() {
     const [selectedRow, setSelectedRow] = React.useState([]);
     const [rowIsClick, setRowIsClick] = useState(false);
     const [userId, setUserId] = useState("");
+    const [dataRow, setDataRow] = useState([]);
 
     useEffect(() => {
         UserId()
@@ -62,7 +63,16 @@ export default function Contributor() {
             .then(response => {
                 const filteredResult = response.filter(item => item.isActive);
                 setGroups(filteredResult);
+                setDataRow(filteredResult);
             });
+    }
+
+    function filter(event) {
+        const value = event.target.value;
+        console.log(value);
+        const filtered = groups.filter(item => `${item.groupName}`.includes(value));
+        console.log(filtered);
+        setDataRow(filtered);
     }
 
     return (
@@ -103,6 +113,7 @@ export default function Contributor() {
                                         sx={{ ml: 1, flex: 1 }}
                                         placeholder="Search"
                                         inputProps={{ 'aria-label': 'search' }}
+                                        onChange={filter}
                                     />
                                     <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                                         <SearchIcon />
@@ -111,7 +122,7 @@ export default function Contributor() {
                             </div>
                             
                         </div>
-                        <GroupsTable rows={groups} setSelectedRow={setSelectedRow} setRowIsClick={rowOnClick} />
+                        <GroupsTable rows={dataRow} setSelectedRow={setSelectedRow} setRowIsClick={rowOnClick} />
                         {rowIsClick && <EditSavingsDialog open={rowIsClick} setOpen={onClose} row={selectedRow} setRowIsClick={rowOnClick} />}
                     </Container>
                 </div>
@@ -121,8 +132,7 @@ export default function Contributor() {
 }
 
 export function GroupsTable({ rows, setSelectedRow, setRowIsClick }) {
-    const [users, setUsers] = useState([]);
-    const defaultDate = 'February 1, 1';
+    const defaultDate = 'January 1, 1';
     const columns = [
         { field: 'groupName', headerName: 'Name', width: 200, },
         { field: 'groupDescription', headerName: 'Description', width: 200, },
@@ -151,25 +161,11 @@ export function GroupsTable({ rows, setSelectedRow, setRowIsClick }) {
         },
     ];
 
-    useEffect(() => {
-        FetchUsers().then((response) => {
-            setUsers(response);
-        });
-    }, []);
-
-    function getUsername(userId) {
-        if (!userId) {
-            return;
-        }
-        const foundUser = users.find(user => user.id === userId);
-        return foundUser ? `${foundUser.firstName} ${foundUser.lastName}` : '';
-    }
-
     function formatDate(dateString) {
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
         const date = new Date(dateString);
-        const mm = months[date.getMonth() + 1];
+        const mm = months[date.getMonth()];
         const dd = date.getDate();
         const yyyy = date.getFullYear();
         const stringDate = `${mm} ${dd}, ${yyyy}`;

@@ -289,7 +289,7 @@ export function AddDialog({ open, setOpen, groupId, nonMembers }) {
 
     return (
         <Dialog open={open} onClose={setOpen}>
-            <DialogTitle>Savings Form</DialogTitle>
+            <DialogTitle>Member Form</DialogTitle>
             <DialogContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <Stack component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '28ch' } }} noValidate autoComplete="off" >
                     <FormControl sx={{ m: 1, minWidth: 200 }}>
@@ -316,64 +316,3 @@ export function AddDialog({ open, setOpen, groupId, nonMembers }) {
         </Dialog>
     );
 }
-
-//export function EditMemberDialog({ open, setOpen, row, username }) {
-//    //VARIABLES FOR INPUTED DATA AND VALIDATE IT
-//    const [user, setUser] = useState([]);
-//    console.log(username);
-//    console.log(row);
-
-
-
-//    function updateMember(isActive) {
-//        console.log(user.id);
-//        const form = new FormData();
-//        form.append('UserId', user.id);
-//        form.append('IsAdmin', false);
-
-//        setOpen();
-//    }
-
-//    function onDelete() {
-//        setOpen();
-
-//        Swal.fire({
-//            title: 'Do you want to delete this savings?',
-//            showDenyButton: true,
-//            confirmButtonText: 'Delete',
-//            denyButtonText: `Cancel`,
-//        })
-//            .then((result) => {
-//                if (result.isConfirmed) {
-//                    updateMember(false);
-//                    Swal.fire('Saved!', '', 'success')
-//                }
-//                else if (result.isDenied) {
-//                    Swal.fire('Changes are not saved', '', 'info')
-//                }
-//            })
-//    }
-
-//    return (
-//        <Dialog open={open} onClose={setOpen}>
-//            <DialogTitle>
-//                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-//                    <label>Register Member</label>
-//                    <IconButton aria-label="delete savings" onClick={onDelete} color="warning" title="Delete savings" >
-//                        <AutoDeleteOutlinedIcon />
-//                    </IconButton>
-
-//                </div>
-//            </DialogTitle>
-//            <DialogContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-//                <Stack component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '28ch' } }} noValidate autoComplete="off" >
-                    
-//                </Stack>
-//            </DialogContent>
-//            <DialogActions>
-//                <Button onClick={setOpen}>Cancel</Button>
-//                <Button onClick={()=>updateMember(false)} disabled={!username}>Update</Button>
-//            </DialogActions>
-//        </Dialog>
-//    );
-//}

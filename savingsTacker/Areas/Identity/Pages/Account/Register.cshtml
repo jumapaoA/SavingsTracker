@@ -7,15 +7,15 @@
 <div class="center">
     <h1>Registration form</h1>
     <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-        <div style="display:flex">
+        <div style="display:flex; margin-bottom: -25px">
             <div class="txt_field" style="max-width:155px">
-                <input asp-for="Input.FirstName" type="text" required>
+                <input asp-for="Input.FirstName" autocomplete="username" type="text" required>
                 <span asp-validation-for="Input.FirstName"></span>
                 <label asp-for="Input.FirstName">First name</label>
             </div>
             <div class="form-floating mb-3" style="width:4%"></div>
             <div class="txt_field" style="max-width:155px">
-                <input asp-for="Input.LastName" type="text" required>
+                <input asp-for="Input.LastName" autocomplete="username" type="text" required>
                 <span asp-validation-for="Input.LastName" style="margin-bottom:-25px"></span>
                 <label asp-for="Input.LastName">Last name</label>
             </div>
@@ -23,6 +23,10 @@
         <div class="txt_field">
             <input asp-for="Input.Email" type="text" autocomplete="username" required>
             <span asp-validation-for="Input.Email"></span>
+            @if(Model.IsUserExist)
+            {
+                <span>Email is already taken.</span>
+            }
             <label asp-for="Input.Email">Email</label>
         </div>
         <div>
@@ -45,17 +49,22 @@
 
         <div style="display:flex">
             <div class="txt_field" style="max-width:155px">
-                <input asp-for="Input.Password" type="text" required>
+                <div>
+                    <input asp-for="Input.Password" id="passwordField" type="password" required>
+                    <input type"checkbox" id="showPassword" style="width: 10px;" onclick="togglePasswordVisibility()">
+                </div>
                 <span asp-validation-for="Input.Password"></span>
                 <label asp-for="Input.Password">Password</label>
+
             </div>
             <div class="form-floating mb-3" style="width:4%"></div>
             <div class="txt_field" style="max-width:155px">
-                <input asp-for="Input.ConfirmPassword" type="text" required>
+                <input asp-for="Input.ConfirmPassword" type="password" required>
                 <span asp-validation-for="Input.ConfirmPassword"></span>
-                <label asp-for="Input.ConfirmPassword"> name</label>
+                <label asp-for="Input.ConfirmPassword">Confirm password</label>
             </div>
         </div>
+        
 
         <input type="submit" value="register">
         <div class="signup_link">
@@ -63,7 +72,20 @@
         </div>
     </form>
 </div>
+<script>
+    function togglePasswordVisibility() {
+        var passwordField = document.getElementById("passwordField");
+        var showPassword = document.getElementById("showPassword");
 
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            showPassword.innerText = "Hide Password";
+        } else {
+            passwordField.type = "password";
+            showPassword.innerText = "Show Password";
+        }
+    }
+</script>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

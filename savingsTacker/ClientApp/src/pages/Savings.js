@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Paper from '@mui/material/Paper';
 import { Container } from 'reactstrap';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { DataGrid } from '@mui/x-data-grid';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -30,6 +28,8 @@ export default function Orders() {
     const [rowIsClick, setRowIsClick] = useState(false);
     const [totalSavings, setTotalSavings] = useState(0);
     const [userId, setUserId] = useState("");
+    const buttonRef = useRef(null);
+    const [buttonWidth, setButtonWidth] = useState(0);
 
     useEffect(() => {
         UserId()
@@ -37,6 +37,11 @@ export default function Orders() {
                 setUserId(response.sub)
                 console.log(response);
             });
+        if (buttonRef.current) {
+            const width = buttonRef.current.offsetWidth;
+            setButtonWidth(width);
+            console.log(width);
+        }
     }, []);
 
     useEffect(() => {
@@ -184,24 +189,12 @@ export default function Orders() {
                     <Container style={{ marginBottom: '1.5em'}}>
                         <p style={{ height: '5px' }}></p>
 
-                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: '10px', marginBottom: '10px' }}>
-                            <div style={{ flex: '65%', padding: '5px' }}>
-                                <Paper
-                                    component="form"
-                                    sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
-                                >
-                                    <InputBase
-                                        sx={{ ml: 1, flex: 1 }}
-                                        placeholder="Search"
-                                        inputProps={{ 'aria-label': 'search' }}
-                                    />
-                                    <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                                        <SearchIcon />
-                                    </IconButton>
-                                </Paper>
-                            </div>
-                            {/*<div style={{ flex: '2%' }} />*/}
-                            <div style={{ flex: '30%', padding: '5px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px', marginBottom: '10px' }}>
+                            < Button style={{ width: '150px', padding: '5px' }} variant="outlined" startIcon={<LocalAtmIcon />} onClick={() => withdrawAll()} disabled={dataRow.length === 0} ref={buttonRef}>
+                                {buttonWidth >= 100 ? 'Withdraw All' : null}
+                            </Button> 
+                            
+                            <div style={{ width: '30%', padding: '5px' }}>
                                 <Autocomplete
                                     value={selectedGroup.length === 0? '':selectedGroup.groupName}
                                     onChange={(event, newValue) => {
@@ -213,7 +206,7 @@ export default function Orders() {
                                 />
                             </div>
                         </div>
-                        < Button variant="outlined" startIcon={<LocalAtmIcon />} onClick={() => withdrawAll()} disabled={dataRow.length === 0}>Withdraw All</Button> 
+                        
                         <p style={{ height: '0.1px' }}></p>
                         <SavingsTable rows={dataRow} setSelectedRow={setSelectedRow} setRowIsClick={rowOnClick} />
                         {rowIsClick && <EditSavingsDialog open={rowIsClick} setOpen={onClose} row={selectedRow} setRowIsClick={rowOnClick} userId={userId} groups={groups} />} 

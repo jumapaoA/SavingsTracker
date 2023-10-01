@@ -116,6 +116,19 @@ namespace savingsTacker.Controllers
 
             AddActivity($"New group has been listed.");
 
+            var Member = new GroupMember()
+            {
+                GroupId = Group.Id,
+                UserId = Request.Form["GroupCreator"].ToString(),
+                IsActive = true,
+                IsAdmin = true,
+                DateAdded = currentDate
+            };
+
+            _GroupMember.AddGroupMember(Member);
+            _Logger.LogInformation($"You are added to a group.");
+
+            AddActivity("You are added to a group.");
             return Ok(Group);
         }
 
