@@ -15,9 +15,15 @@
             <label asp-for="Input.Email">Email</label>
         </div>
         <div class="txt_field">
-            <input asp-for="Input.Password" type="password" autocomplete="current-password" required>
+            <input asp-for="Input.Password" type="password" id="passwordField" autocomplete="current-password" required>
             <span asp-validation-for="Input.Password"></span>
             <label asp-for="Input.Password">Password</label>
+        </div>
+        <div style="display:flex">
+            <input type="checkbox" id="showPassword" style="width: 10px;" onclick="togglePasswordVisibility()">
+            <label style=" font-size: 12px; padding: 10px;">
+                Show password
+            </label>
         </div>
         <div class="pass">
             <a asp-page="./ForgotPassword">
@@ -30,6 +36,21 @@
         </div>
     </form>
 </div>
+
+<script>
+    function togglePasswordVisibility() {
+        var passwordField = document.getElementById("passwordField");
+        var showPassword = document.getElementById("showPassword");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            showPassword.innerText = "Hide Password";
+        } else {
+            passwordField.type = "password";
+            showPassword.innerText = "Show Password";
+        }
+    }
+</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

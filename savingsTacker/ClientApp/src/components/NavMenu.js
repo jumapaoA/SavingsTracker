@@ -76,11 +76,7 @@ export default function MavMenu({ children }) {
                     <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }} >
                         <a href="/" style={{ color: 'white', textDecoration:'none' }}>Savings Tracker</a>
                     </Typography>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
+                    
                     <LoginMenu />
                 </Toolbar>
             </AppBar>

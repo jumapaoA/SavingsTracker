@@ -47,24 +47,27 @@
             <span asp-validation-for="Input.Gender" style="text-decoration: none; color: red; font-size: 12px;"></span>
         </div>
 
+
         <div style="display:flex">
             <div class="txt_field" style="max-width:155px">
-                <div>
-                    <input asp-for="Input.Password" id="passwordField" type="password" required>
-                    <input type"checkbox" id="showPassword" style="width: 10px;" onclick="togglePasswordVisibility()">
-                </div>
+                <input asp-for="Input.Password" id="passwordField" type="password" required>
                 <span asp-validation-for="Input.Password"></span>
                 <label asp-for="Input.Password">Password</label>
 
             </div>
             <div class="form-floating mb-3" style="width:4%"></div>
             <div class="txt_field" style="max-width:155px">
-                <input asp-for="Input.ConfirmPassword" type="password" required>
+                <input asp-for="Input.ConfirmPassword" id="passwordField" type="password" required>
                 <span asp-validation-for="Input.ConfirmPassword"></span>
                 <label asp-for="Input.ConfirmPassword">Confirm password</label>
             </div>
         </div>
-        
+        <div style="display:flex">
+            <input type="checkbox" id="showPassword" style="width: 10px;" onclick="togglePasswordVisibility()">
+            <label style=" font-size: 12px; padding: 10px;">
+                Show password
+            </label>
+        </div>
 
         <input type="submit" value="register">
         <div class="signup_link">
