@@ -149,7 +149,7 @@ namespace savingsTacker.Areas.Identity.Pages.Account
 
                     var activityLog = new ActivityLog()
                     {
-                        Message = "Your created an account",
+                        Message = "Your account was created.",
                         UserId = user.Id,
                         DateAccess = DateTime.Now
                     };

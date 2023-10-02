@@ -108,7 +108,7 @@ export default function Reports() {
 export function SavingsTable({ savings, selectedGroup }) {
     const [users, setUsers] = useState([]);
     const [dataRow, setDataRow] = useState(savings);
-    const defaultDate = 'February 1, 1';
+    const defaultDate = 'January 1, 1';
     const columns = [
         {
             field: 'userId', headerName: 'Contributor', width: 200,
@@ -196,7 +196,7 @@ export function SavingsTable({ savings, selectedGroup }) {
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
         const date = new Date(dateString);
-        const mm = months[date.getMonth() + 1];
+        const mm = months[date.getMonth()];
         const dd = date.getDate();
         const yyyy = date.getFullYear();
         const stringDate = `${mm} ${dd}, ${yyyy}`;

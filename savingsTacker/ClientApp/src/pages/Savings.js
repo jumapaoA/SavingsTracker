@@ -45,7 +45,10 @@ export default function Orders() {
     }, []);
 
     useEffect(() => {
-        console.log("count: "+userId);
+        getDatas();
+    }, [userId]);
+
+    function getDatas() {
         if (userId) {
             FetchSavingsByUserId(userId)
                 .then(response => {
@@ -56,8 +59,7 @@ export default function Orders() {
 
             FetchGroupsByUserId(userId).then(response => setGroups(response));
         }
-        
-    }, [userId]);
+    }
 
     useEffect(() => {
         console.log(selectedGroup);
@@ -66,7 +68,7 @@ export default function Orders() {
             if (id) {
                 FetchSavingsByGroupId(id)
                     .then((response) => {
-                        const filtered = response.filter(item => item.isActive);
+                        const filtered = response.filter(item => item.isActive && item.userId === userId);
                         setDataRow(filtered);
                     });
             }
@@ -96,6 +98,7 @@ export default function Orders() {
 
     function onCloseAddForm() {
         setAddIsClick(false);
+        getDatas();
     }
 
     function onGroupChange(newValue) {
@@ -155,11 +158,13 @@ export default function Orders() {
 
     function onClose() {
         setRowIsClick(false);
+        getDatas();
     };
 
     function defaultStatus() {
         setDataRow(savings);
         setSelectedGroup([]);
+        getDatas();
     }
 
     return (
@@ -325,15 +330,11 @@ export function AddDialog({ open, setOpen, userId }) {
     }, []);
 
     useEffect(() => {
-        console.log(amountInvalid);
-        console.log(descriptionInvalid);
-        console.log(amount);
-        console.log(description);
         if ((amountInvalid || descriptionInvalid) || amount === '0' || amount === '' || description === '')
             setFormLacking(true);
         else
             setFormLacking(false);
-    }, [amountInvalid, descriptionInvalid]);
+    }, [amountInvalid, descriptionInvalid, amount, description]);
 
     function onGroupChange(newValue) {
         if (newValue) {
@@ -375,7 +376,8 @@ export function AddDialog({ open, setOpen, userId }) {
         console.log(amount);
 
 
-        if (selectedGroup) {
+        if (selectedGroup.length > 0) {
+            console.log("create group savings");
             CreateGroupSavings(selectedGroup.id, form)
                 .then(
                     Swal.fire({
@@ -450,7 +452,7 @@ export function AddDialog({ open, setOpen, userId }) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={setOpen}>Cancel</Button>
-                <Button onClick={addSavings} disabled={formLacking}>Add</Button>
+                <Button onClick={addSavings} disabled={amountInvalid || descriptionInvalid || formLacking}>Add</Button>
             </DialogActions>
         </Dialog>
     );

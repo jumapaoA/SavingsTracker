@@ -7,7 +7,10 @@
 
 
 <div class="center">
-    <h1>@ViewData["Title"]</h1>
+    <h1 style=" font-size: 30px; font-style: italic;">
+        Bunny Bucks:
+        <p style=" margin-bottom: -10px; font-size: 17px; font-style: initial; font-weight: 400; color: #2691d9">Savings Tracker</p>
+    </h1>
     <form method="post">
         <div class="txt_field">
             <input asp-for="Input.Email" type="text" autocomplete="username" required>
@@ -25,6 +28,10 @@
                 Show password
             </label>
         </div>
+        @if (Model.IsUserExist)
+        {
+            <span style=" color: red; font-size: 12px;">Invalid credintials.</span>
+        }
         <div class="pass">
             <a asp-page="./ForgotPassword">
                 Forgot password?

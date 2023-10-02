@@ -199,6 +199,15 @@ export async function FetchGroupsByUserId(userId) {
     return null;
 }
 
+export async function FetchGroupsByCreatorId(userId) {
+    const response = await axios.get(`/groups/admin/${userId}`);
+    if (response.status === 200) {
+        return response.data;
+    }
+
+    return null;
+}
+
 export async function FetchGroupsByCreator(userId) {
     const response = await axios.get(`/groups/admin/${userId}`);
     if (response.status === 200) {
@@ -258,7 +267,8 @@ export async function CreateGroupSavings(groupId, form) {
         body: form
     })
 
-    if (response.status === 200 || response.status === 204) {
+    console.log(response);
+    if (response.status === 200) {
         console.log(response.data);
         return response.data;
     }

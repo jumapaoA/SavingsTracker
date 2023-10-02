@@ -21,7 +21,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Swal from 'sweetalert2';
 
-import { UserId, FetchSavingsByUserId, FetchMembersByGroupId, CreateGroupMember, UpdateMemberStatus, FetchUsers, CreateGroupSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings, FetchGroupBySavingsId, UpdateGroupSavings, UpdateAdminMember } from '../axios/fetch-api';
+import { UserId, FetchMembersByGroupId, CreateGroupMember, UpdateMemberStatus, FetchUsers, CreateGroupSavings, FetchGroupsByUserId, FetchSavingsByGroupId, CreateSaving, UpdateSavings, FetchGroupBySavingsId, UpdateGroupSavings, UpdateAdminMember, FetchGroupsByCreatorId } from '../axios/fetch-api';
 
 export default function Members() {
     const [users, setUsers] = useState([]);
@@ -33,6 +33,7 @@ export default function Members() {
     const [totalMembers, setTotalMembers] = useState(0);
     const [addIsClick, setAddIsClick] = useState(false);
     const [rowIsClick, setRowIsClick] = useState(false);
+    const [isGroupAdmin, setIsGroupAdmin] = useState(false);
     const [selectedRow, setSelectedRow] = useState([]);
     const [nonMembers, setNonMembers] = useState([]);
     const defaultDate = 'January 1, 1';
@@ -89,7 +90,10 @@ export default function Members() {
     useEffect(() => {
         console.log("count: " + userId);
         if (userId) {
-            FetchGroupsByUserId(userId).then(response => setGroups(response));
+            FetchGroupsByUserId(userId).then(response => {
+                console.log(response);
+                setGroups(response);
+            });
         }
 
     }, [userId]);
@@ -150,7 +154,12 @@ export default function Members() {
                 console.log(response);
                 setMembers(response);
                 setTotalMembers(response.length);
+                const user = response.find(res => res.userId === userId);
+
+                console.log(user);
+                setIsGroupAdmin(user.isAdmin);
             });
+        
     }
 
     function getUsername(userId) {
@@ -177,6 +186,7 @@ export default function Members() {
         if (newValue) {
             const selectedGroupObject = groups.find(group => group.groupName === newValue);
             setSelectedGroup(selectedGroupObject);
+            console.log(selectedGroupObject);
         }
         else {
             setSelectedGroup([]);
@@ -252,7 +262,7 @@ export default function Members() {
                                         pageSizeOptions={[5, 10, 50]}
                                         onRowClick={(params) => {
                                             setSelectedRow(params.row);
-                                            setRowIsClick(true);
+                                            setRowIsClick(isGroupAdmin);
                                         }}
                                     />
                             }
@@ -298,7 +308,7 @@ export function AddDialog({ open, setOpen, groupId, nonMembers }) {
                             width='100%'
                             value={user}
                             onChange={(event) => onChange(event)}
-                            label="Age"
+                            label="User"
                         >
                             {
                                 nonMembers.map(user => {

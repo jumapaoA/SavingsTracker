@@ -13,7 +13,7 @@ import Chart from './Chart';
 import Deposits from './Deposits';
 import { SavingsTable } from './Savings';
 
-import { FetchSavingsByUserId } from '../axios/fetch-api';
+import { UserId, FetchSavingsByUserId } from '../axios/fetch-api';
 
 function Copyright(props) {
     return (
@@ -34,11 +34,22 @@ function preventDefault() {
 
 export default function Dashboard() {
     const [rows, setRows] = useState([]);
+    const [userId, setUserId] = useState("");
 
     useEffect(() => {
-        FetchSavingsByUserId("a0cf219d-6bdb-444f-8013-76a7fd4c4fa1")
-            .then(response => setRows(response));
+        UserId()
+            .then(response => {
+                setUserId(response.sub)
+                console.log(response);
+            });
     }, []);
+
+    useEffect(() => {
+        if (userId) {
+            FetchSavingsByUserId(userId)
+                .then(response => setRows(response));
+        }
+    }, [userId]);
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>

@@ -3,6 +3,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace savingsTacker.Areas.Identity.Pages.Account
@@ -20,6 +21,11 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         /// </summary>
         public void OnGet()
         {
+        }
+
+        public IActionResult OnPost() 
+        {
+            return RedirectToPage("./ResetPassword");
         }
     }
 }

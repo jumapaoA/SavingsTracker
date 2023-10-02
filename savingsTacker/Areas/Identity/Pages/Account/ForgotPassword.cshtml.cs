@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
 
 namespace savingsTacker.Areas.Identity.Pages.Account
@@ -21,11 +22,13 @@ namespace savingsTacker.Areas.Identity.Pages.Account
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IActivityLogRepository _activityLogRepository;
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IActivityLogRepository activityLog)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _activityLogRepository = activityLog;
         }
 
         [BindProperty]
@@ -63,6 +66,15 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                     Input.Email,
                     "Reset Password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                var activityLog = new ActivityLog()
+                {
+                    Message = "You reset your password.",
+                    UserId = user.Id,
+                    DateAccess = DateTime.Now
+                };
+
+                _activityLogRepository.AddActivity(activityLog);
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

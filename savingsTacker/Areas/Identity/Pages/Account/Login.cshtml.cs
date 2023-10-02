@@ -36,6 +36,8 @@ namespace savingsTacker.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
 
+        public bool IsUserExist { get; set; }
+
         [TempData]
         public string ErrorMessage { get; set; }
 
@@ -83,9 +85,15 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
 
                 if (Input == null)
+                {
                     _logger.LogInformation("Inside Input == null");
+                    IsUserExist = false;
+                }
                 else
+                {
                     _logger.LogInformation("Inside Input != null");
+                    IsUserExist = true;
+                }
 
                 if (result.Succeeded)
                 {
