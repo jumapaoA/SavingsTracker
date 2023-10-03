@@ -3,7 +3,7 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import Title from './Title';
 
-import { UserId, FetchSavingsByUserId, FetchGroupsByUserId, FetchSavingsByGroupId } from '../axios/fetch-api';
+import { UserId, FetchSavingsByUserId } from '../axios/fetch-api';
 
 export default function Deposits() {
     const [savings, setSavings] = useState([]);
@@ -15,7 +15,6 @@ export default function Deposits() {
         UserId()
             .then(response => {
                 setUserId(response.sub)
-                console.log(response);
             });
     }, []);
 
@@ -60,7 +59,6 @@ export default function Deposits() {
         console.log(dateAdded);
         if (isNaN(dateAdded)) {
             const date = new Date(Date.now());
-            console.log(date);
             const mm = months[date.getMonth()];
             const dd = date.getDate();
             const yyyy = date.getFullYear();

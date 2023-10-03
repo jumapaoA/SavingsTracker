@@ -6,11 +6,13 @@ import ActivityLog from './pages/ActivityLog';
 import Reports from './pages/Reports';
 import Savings from './pages/Savings';
 import Members from './pages/Members';
+import { SuccessModal, UnsuccessModal } from './components/Modal';
 
 const AppRoutes = [
     {
         index: true,
         requireAuth: true,
+        path: '/',
         element: <Dashboard />
     },
     {
@@ -41,6 +43,16 @@ const AppRoutes = [
         path: '/fetch-data',
         requireAuth: true,
         element: <FetchData />
+    },
+    {
+        path: '/success',
+        requireAuth: true,
+        element: <SuccessModal />
+    },
+    {
+        path: '/notsuccess',
+        requireAuth: true,
+        element: <UnsuccessModal />
     },
     ...ApiAuthorzationRoutes
 ];

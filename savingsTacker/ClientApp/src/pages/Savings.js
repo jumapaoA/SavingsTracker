@@ -112,7 +112,6 @@ export default function Orders() {
     }
 
     function withdrawAll() {
-        console.log(dataRow.length);
         if (dataRow.length === 0) {
             return;
         }
@@ -129,7 +128,6 @@ export default function Orders() {
             if (result.isConfirmed) {
                 for (let i = 0; i < dataRow.length; i++) {
                     const currentItem = dataRow[i];
-                    console.log(currentItem);
 
                     const form = new FormData();
                     form.append('UserId', currentItem.userId);
@@ -373,11 +371,8 @@ export function AddDialog({ open, setOpen, userId }) {
         form.append('UserId', userId);
         form.append('Amount', amount);
         form.append('Description', description);
-        console.log(amount);
-
 
         if (selectedGroup.length > 0) {
-            console.log("create group savings");
             CreateGroupSavings(selectedGroup.id, form)
                 .then(
                     Swal.fire({

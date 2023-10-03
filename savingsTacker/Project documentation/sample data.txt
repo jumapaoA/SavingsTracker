@@ -1,0 +1,8 @@
+sample data for savings
+    description: Monthly savings
+    amount: 1000,
+
+sample data for group
+    name: Business
+
+    description: Savings for a business investment.

@@ -4,9 +4,6 @@ import { DataGrid } from '@mui/x-data-grid';
 
 import { UserId, FetchActivityLog } from '../axios/fetch-api';
 
-//const userId = "a0cf219d-6bdb-444f-8013-76a7fd4c4fa1";
-//const userId = "ab8ebde1-5431-42e0-9db0-ba001529ca1f";
-
 export default function ActivityLog() {
     const [dataRow, setDataRow] = useState([]);
     const [userId, setUserId] = useState("");

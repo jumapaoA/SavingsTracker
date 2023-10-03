@@ -7,18 +7,24 @@
 
 <div class="center">
     <h1>@ViewData["Title"]</h1>
+    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+        <div class="alert alert-success">
+            @Model.StatusMessage
+        </div>
+    }
     <form id="profile-form" method="post">
         <div style="display:flex">
             <div class="txt_field" style="max-width:155px">
                 <input asp-for="Input.FirstName" type="text" required>
                 <span asp-validation-for="Input.FirstName"></span>
-                <label asp-for="Input.FirstName">First name</label>
+                <label asp-for="Input.FirstName"></label>
             </div>
             <div class="form-floating mb-3" style="width:4%"></div>
             <div class="txt_field" style="max-width:155px">
                 <input asp-for="Input.LastName" type="text" required>
                 <span asp-validation-for="Input.LastName" style="margin-bottom:-25px"></span>
-                <label asp-for="Input.LastName">Last name</label>
+                <label asp-for="Input.LastName"></label>
             </div>
         </div>
         <div>
@@ -40,7 +46,7 @@
         </div>
         <div class="txt_field" style="border-bottom:2px solid #2691DA">
             <input asp-for="Username" type="text" autocomplete="username" disabled />
-            <label asp-for="Username" style="color:#2691DA; top:-5px"></label>
+            <label style="color:#2691DA; top:-5px">Email</label>
         </div>
         <div class="txt_field" >
             <input asp-for="Input.PhoneNumber" autocomplete="phoneNumber" placeholder="" />
@@ -61,4 +67,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
 }

@@ -129,7 +129,7 @@ namespace savingsTacker.Controllers
         }
 
         [HttpPost]
-        [Route("api/[controller]/upload/profile-picture/{userId:guid}")]
+        [Route("[controller]/upload/profile-picture/{userId:guid}")]
         public async Task<ActionResult> SaveProfilePicture(string userId)
         {
             var User = await _UserManager.FindByIdAsync(userId);

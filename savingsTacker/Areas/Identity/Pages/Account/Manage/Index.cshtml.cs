@@ -36,13 +36,13 @@ namespace savingsTacker.Areas.Identity.Pages.Account.Manage
             [Required(ErrorMessage = "First name is required")]
             [StringLength(100, ErrorMessage = "First name must be {2} to {1} characters long.", MinimumLength = 2)]
             [DataType(DataType.Text)]
-            [Display(Name = "FirstName")]
+            [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
             [Required(ErrorMessage = "Last name is required")]
             [StringLength(100, ErrorMessage = "Last name must be {2} to {1} characters long.", MinimumLength = 2)]
             [DataType(DataType.Text)]
-            [Display(Name = "LastName")]
+            [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
             [Required(ErrorMessage = "Gender is required.")]
@@ -50,8 +50,9 @@ namespace savingsTacker.Areas.Identity.Pages.Account.Manage
             public string Gender { get; set; }
 
             [Phone]
+            [Required(ErrorMessage = "Phone number is required.")]
             [RegularExpression(@"^(?:\+639\d{9}|09\d{9})$", ErrorMessage = "Invalid phone number format (+639/09).")]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Phone Number")]
             [StringLength(13, ErrorMessage = "Phone number must be 11 (09) or  13 (+639) characters long.", MinimumLength = 11)]
             public string PhoneNumber
             {
@@ -117,7 +118,8 @@ namespace savingsTacker.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Your profile has been updated!";
+
             return RedirectToPage();
         }
     }

@@ -1,7 +1,6 @@
 ﻿import React, {useEffect, useState} from 'react';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, Tooltip } from 'recharts';
-import _ from 'lodash';
 import Title from './Title';
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

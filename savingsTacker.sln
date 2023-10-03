@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "savingsTacker", "savingsTacker\savingsTacker.csproj", "{167FD9CA-8128-43D4-998F-285FC3204779}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "savingsTacker", "savingsTacker\savingsTacker.csproj", "{167FD9CA-8128-43D4-998F-285FC3204779}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "savingsTrackerTest", "savingsTrackerTest\savingsTrackerTest.csproj", "{39155943-CB7C-4D00-8FE3-63F13F8082C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{167FD9CA-8128-43D4-998F-285FC3204779}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{167FD9CA-8128-43D4-998F-285FC3204779}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{167FD9CA-8128-43D4-998F-285FC3204779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39155943-CB7C-4D00-8FE3-63F13F8082C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39155943-CB7C-4D00-8FE3-63F13F8082C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39155943-CB7C-4D00-8FE3-63F13F8082C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39155943-CB7C-4D00-8FE3-63F13F8082C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

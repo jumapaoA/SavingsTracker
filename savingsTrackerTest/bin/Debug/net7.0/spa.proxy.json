@@ -1,0 +1,8 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:44448",
+"LaunchCommand": "npm start",
+"WorkingDirectory": "C:\\FAST TRACK TRANING\\ALYSSA CODING\\Side Projects\\SavingsTracker latest\\savingsTacker\\ClientApp\\",
+"MaxTimeoutInSeconds": "120"
+}
+}
