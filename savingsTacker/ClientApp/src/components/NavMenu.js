@@ -3,14 +3,13 @@ import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { LoginMenu } from './api-authorization/LoginMenu';
-import { mainListItems } from '../pages/listItems';
+import { MainListItems } from '../pages/listItems';
 
 const drawerWidth = 240;
 
@@ -93,11 +92,8 @@ export default function MavMenu({ children }) {
                     </IconButton>
                 </Toolbar>
                 <Divider />
-                <List component="nav">
-                    {mainListItems}
-                    {/*<Divider sx={{ my: 1 }} />*/}
-                    {/*{secondaryListItems}*/}
-                </List>
+                <MainListItems />
+                
             </Drawer>
         </>
     );

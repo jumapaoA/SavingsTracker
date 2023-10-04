@@ -4,5 +4,15 @@ sample data for savings
 
 sample data for group
     name: Business
-
     description: Savings for a business investment.
+
+sample data for user
+    firstname: just 
+    lastname: me
+    email: alyssajumapao17@gmail.com
+    password: alyssaJUMAPAO17!
+
+    newPassword: Alyssa17!
+
+
+/authentication/logout
