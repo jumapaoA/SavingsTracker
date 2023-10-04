@@ -22,10 +22,10 @@
             <span asp-validation-for="Input.Password"></span>
             <label asp-for="Input.Password">Password</label>
         </div>
-        <div style="display:flex">
-            <input type="checkbox" id="showPassword" style="width: 10px;" onclick="togglePasswordVisibility()">
-            <label style=" font-size: 12px; padding: 10px;">
-                Show password
+        <div style="display:flex" id="passwordToggle" onclick="togglePasswordVisibility()">
+            <input type="checkbox" id="showPassword" style="width: 13px;">
+            <label style=" font-size: 13px; color: #a6a6a6; padding: 10px;">
+                Show Password
             </label>
         </div>
         @if (Model.IsUserExist)
@@ -34,10 +34,10 @@
         }
         <div class="pass">
             <a asp-page="./ForgotPassword">
-                Forgot password?
+                Forgot Password?
             </a>
         </div>
-        <input type="submit" value="login">
+        <input type="submit" value="Login">
         <div class="signup_link">
             Not a member? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Signup</a>
         </div>
@@ -45,6 +45,10 @@
 </div>
 
 <script>
+    document.getElementById('passwordToggle').addEventListener('click', function () {
+        var checkbox = document.getElementById('showPassword');
+        checkbox.checked = !checkbox.checked;
+    });
     function togglePasswordVisibility() {
         var passwordField = document.getElementById("passwordField");
         var showPassword = document.getElementById("showPassword");

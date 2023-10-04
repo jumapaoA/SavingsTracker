@@ -1,9 +1,7 @@
 ﻿import Swal from 'sweetalert2';
-import React, { Component, Fragment, useState } from 'react';
-import { NavItem, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import React from 'react';
 
-import { ApplicationPaths, LoginActions, LogoutActions } from '../components/api-authorization/ApiAuthorizationConstants';
+import { ApplicationPaths } from '../components/api-authorization/ApiAuthorizationConstants';
 
 export function UnsuccessModal() {
 

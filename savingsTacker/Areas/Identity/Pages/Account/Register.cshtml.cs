@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
+using savingsTacker.Services;
 
 namespace savingsTacker.Areas.Identity.Pages.Account
 {
@@ -138,12 +139,18 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    _logger.LogInformation(userId.ToString());
+                    _logger.LogInformation(code.ToString());
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                        values: new { area = "Identity", code=code, userId=userId, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
+                    EmailSender.TEMPLATE_ID = "d-0a86405d33b44b15b9fc7f4cc6cd81b2";
+                    EmailSender.EMAIL_LINK = $"https://localhost:44448/Identity/Account/ConfirmEmail?userId={userId}&code={code}&returnUrl={returnUrl}";
+
+                    EmailSender.NAME = Input.FirstName;
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm email account",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 

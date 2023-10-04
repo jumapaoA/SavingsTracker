@@ -35,12 +35,10 @@ export default function Orders() {
         UserId()
             .then(response => {
                 setUserId(response.sub)
-                console.log(response);
             });
         if (buttonRef.current) {
             const width = buttonRef.current.offsetWidth;
             setButtonWidth(width);
-            console.log(width);
         }
     }, []);
 
@@ -62,7 +60,6 @@ export default function Orders() {
     }
 
     useEffect(() => {
-        console.log(selectedGroup);
         if (selectedGroup) {
             const id = selectedGroup.id;
             if (id) {
@@ -334,6 +331,7 @@ export function AddDialog({ open, setOpen, userId }) {
             setFormLacking(false);
     }, [amountInvalid, descriptionInvalid, amount, description]);
 
+
     function onGroupChange(newValue) {
         if (newValue) {
             const selectedGroupObject = groups.find(group => group.groupName === newValue);
@@ -372,7 +370,7 @@ export function AddDialog({ open, setOpen, userId }) {
         form.append('Amount', amount);
         form.append('Description', description);
 
-        if (selectedGroup.length > 0) {
+        if (selectedGroup.id) {
             CreateGroupSavings(selectedGroup.id, form)
                 .then(
                     Swal.fire({

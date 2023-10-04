@@ -99,18 +99,7 @@ export default function Members() {
     }, [userId]);
 
     useEffect(() => {
-        console.log(selectedGroup);
-        if (selectedGroup) {
-            const id = selectedGroup.id;
-            if (id) {
-                setShowMessage(false);
-                getMembers();
-            }
-            else {
-                setShowMessage(true);
-                setTotalMembers(0);
-            }
-        }
+        getMembers();
     }, [selectedGroup]);
 
     useEffect(() => {
@@ -120,7 +109,6 @@ export default function Members() {
 
     useEffect(() => {
         if (rowIsClick) {
-            console.log(selectedRow);
             Swal.fire({
                 icon: 'question',
                 title: 'What action?',
@@ -144,22 +132,30 @@ export default function Members() {
                         Swal.fire(`Updated to admin!`, '', 'success')
                     }
                 })
+            getMembers();
             setRowIsClick(false);
         }
     }, [rowIsClick]);
 
     function getMembers() {
-        FetchMembersByGroupId(selectedGroup.id)
-            .then(response => {
-                console.log(response);
-                setMembers(response);
-                setTotalMembers(response.length);
-                const user = response.find(res => res.userId === userId);
+        if (selectedGroup) {
+            const id = selectedGroup.id;
+            if (id) {
+                setShowMessage(false);
+                FetchMembersByGroupId(selectedGroup.id)
+                    .then(response => {
+                        setMembers(response);
+                        setTotalMembers(response.length);
+                        const user = response.find(res => res.userId === userId);
 
-                console.log(user);
-                setIsGroupAdmin(user.isAdmin);
-            });
-        
+                        setIsGroupAdmin(user.isAdmin);
+                    });
+            }
+            else {
+                setShowMessage(true);
+                setTotalMembers(0);
+            }
+        }
     }
 
     function getUsername(userId) {
@@ -198,8 +194,8 @@ export default function Members() {
     }
 
     function onCloseAddForm() {
-        getMembers();
         setAddIsClick(false);
+        getMembers();
     }
 
 
@@ -267,7 +263,6 @@ export default function Members() {
                                     />
                             }
                         </div>
-                        {/*{rowIsClick && <EditMemberDialog open={rowIsClick} setOpen={onClose} row={selectedRow} username={getUsername(selectedRow.userId)} />} */}
                     </Container>
                 </div>
             </div>

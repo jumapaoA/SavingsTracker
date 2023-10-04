@@ -16,43 +16,42 @@ export function MainListItems() {
 
     useEffect(() => {
         const currentURL = window.location.pathname;
-        console.log(currentURL);
         setActiveTab(currentURL);
     }, []);
 
     return (
         <List component="nav">
-            <ListItemButton href='/' style={{ backgroundColor: activeTab === "/" ? '#084581' : '', color: activeTab === "/" ? '#ffff' : 'black' }}>
+            <ListItemButton href='/' style={{ backgroundColor: activeTab === "/" ? '#673ab7b3' : '', color: activeTab === "/" ? '#ffff' : 'black' }}>
                 <ListItemIcon>
                     <DashboardIcon style={{ color: activeTab === "/" ? "white": ""}} />
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
             </ListItemButton>
-            <ListItemButton href='/saving' style={{ backgroundColor: activeTab === "/saving" ? '#084581' : '', color: activeTab === "/saving" ? '#ffff' : 'black' }}>
+            <ListItemButton href='/saving' style={{ backgroundColor: activeTab === "/saving" ? '#673ab7b3' : '', color: activeTab === "/saving" ? '#ffff' : 'black' }}>
                 <ListItemIcon>
                     <SavingsIcon style={{ color: activeTab === "/saving" ? "white" : "" }} />
                 </ListItemIcon>
                 <ListItemText primary="Savings" />
             </ListItemButton>
-            <ListItemButton href='/contributor' style={{ backgroundColor: activeTab === "/contributor" ? '#084581' : '', color: activeTab === "/contributor" ? '#ffff' : 'black' }}>
+            <ListItemButton href='/contributor' style={{ backgroundColor: activeTab === "/contributor" ? '#673ab7b3' : '', color: activeTab === "/contributor" ? '#ffff' : 'black' }}>
                 <ListItemIcon>
                     <PeopleIcon style={{ color: activeTab === "/contributor" ? "white" : "" }} />
                 </ListItemIcon>
                 <ListItemText primary="Groups" />
             </ListItemButton>
-            <ListItemButton href='/member' style={{ backgroundColor: activeTab === "/member" ? '#084581' : '', color: activeTab === "/member" ? '#ffff' : 'black' }}>
+            <ListItemButton href='/member' style={{ backgroundColor: activeTab === "/member" ? '#673ab7b3' : '', color: activeTab === "/member" ? '#ffff' : 'black' }}>
                 <ListItemIcon>
                     <GroupAddIcon style={{ color: activeTab === "/member" ? "white" : "" }} />
                 </ListItemIcon>
                 <ListItemText primary="Members" />
             </ListItemButton>
-            <ListItemButton href='/reports' style={{ backgroundColor: activeTab === "/reports" ? '#084581' : '', color: activeTab === "/reports" ? '#ffff' : 'black' }}>
+            <ListItemButton href='/reports' style={{ backgroundColor: activeTab === "/reports" ? '#673ab7b3' : '', color: activeTab === "/reports" ? '#ffff' : 'black' }}>
                 <ListItemIcon>
                     <BarChartIcon style={{ color: activeTab === "/reports" ? "white" : "" }} />
                 </ListItemIcon>
                 <ListItemText primary="Reports" />
             </ListItemButton>
-            <ListItemButton href='/activities' style={{ backgroundColor: activeTab === "/activities" ? '#084581' : '', color: activeTab === "/activities" ? '#ffff' : 'black' }}>
+            <ListItemButton href='/activities' style={{ backgroundColor: activeTab === "/activities" ? '#673ab7b3' : '', color: activeTab === "/activities" ? '#ffff' : 'black' }}>
                 <ListItemIcon>
                     <AssignmentIcon style={{ color: activeTab === "/activities" ? "white" : "" }} />
                 </ListItemIcon>

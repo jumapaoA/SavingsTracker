@@ -37,14 +37,14 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         {
             if (email == null)
             {
-                return RedirectToPage("/Index");
+                return RedirectToPage("./Index");
             }
             returnUrl = returnUrl ?? Url.Content("~/");
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return RedirectToPage("/ErrorPage");
+                return RedirectToPage("./ErrorPage");
             }
 
             Email = email;

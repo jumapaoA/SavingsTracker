@@ -20,17 +20,21 @@ namespace savingsTacker.Areas.Identity.Pages.Account
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokensRepository _token;
+        private readonly ILogger<ConfirmEmailModel> _logger;
 
-        public ConfirmEmailModel(UserManager<ApplicationUser> userManager, ITokensRepository token)
+        public ConfirmEmailModel(UserManager<ApplicationUser> userManager, ITokensRepository token, ILogger<ConfirmEmailModel> logger)
         {
             _userManager = userManager;
             _token = token;
+            _logger = logger;
         }
 
         [TempData]
         public string StatusMessage { get; set; }
         public async Task<IActionResult> OnGetAsync(string userId, string code)
         {
+            _logger.LogInformation(userId);
+            _logger.LogInformation(code);
             if (userId == null || code == null)
             {
                 return RedirectToPage("./Login");

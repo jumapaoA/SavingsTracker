@@ -127,7 +127,6 @@ export async function FetchSavingsBySavingId(savingId) {
 export async function FetchSavingsByGroupId(groupId) {
     const response = await axios.get(`/savings/group/${groupId}`);
     if (response.status === 200) {
-        console.log(response.data);
         return response.data;
     }
 

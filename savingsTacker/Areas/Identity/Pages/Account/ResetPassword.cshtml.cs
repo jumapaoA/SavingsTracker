@@ -20,11 +20,13 @@ namespace savingsTacker.Areas.Identity.Pages.Account
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokensRepository _token;
+        private readonly ILogger<ResetPasswordModel> _logger;
 
-        public ResetPasswordModel(UserManager<ApplicationUser> userManager, ITokensRepository token)
+        public ResetPasswordModel(UserManager<ApplicationUser> userManager, ITokensRepository token, ILogger<ResetPasswordModel> logger)
         {
             _userManager = userManager;
             _token = token;
+            _logger = logger;
         }
 
         [BindProperty]
@@ -56,6 +58,7 @@ namespace savingsTacker.Areas.Identity.Pages.Account
 
         public IActionResult OnGet(string code = null)
         {
+            _logger.LogInformation(code);
             if (code == null)
             {
                 return BadRequest("A code must be supplied for password reset.");

@@ -46,8 +46,8 @@ export default function Contributor() {
     }
 
     function onCloseAddForm() {
-        defaultStatus();
         setAddIsClick(false);
+        defaultStatus();
     }
 
     function rowOnClick() {
@@ -55,17 +55,19 @@ export default function Contributor() {
     }
 
     function onClose() {
-        defaultStatus();
         setRowIsClick(false);
+        defaultStatus();
     }
 
     function defaultStatus() {
-        FetchGroupsByCreator(userId)
-            .then(response => {
-                const filteredResult = response.filter(item => item.isActive);
-                setGroups(filteredResult);
-                setDataRow(filteredResult);
-            });
+        if (userId) {
+            FetchGroupsByCreator(userId)
+                .then(response => {
+                    const filteredResult = response.filter(item => item.isActive);
+                    setGroups(filteredResult);
+                    setDataRow(filteredResult);
+                });
+        }
     }
 
     function filter(event) {

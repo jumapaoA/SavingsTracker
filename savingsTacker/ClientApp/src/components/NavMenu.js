@@ -65,20 +65,7 @@ export default function MavMenu({ children }) {
     
     return (
         <>
-            <AppBar position="absolute" open={open} sx={{ zIndex:'1000' }}>
-                <Toolbar sx={{ pr: '24px', }} >
-                    <IconButton edge="start" color="inherit" aria-label="open drawer" onClick={toggleDrawer} sx={{ marginRight: '36px', ...(open && { display: 'none' }), }} >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }} >
-                        <a href="/" style={{ color: 'white', textDecoration:'none' }}>Savings Tracker</a>
-                    </Typography>
-                    
-                    <LoginMenu />
-                </Toolbar>
-            </AppBar>
-
-            <Drawer variant="permanent" open={open} sx={{ zIndex: '1000' }}>
+            <Drawer variant="permanent" open={open} sx={{ zIndex: '1000', marginTop: '55px' }} >
                 <Toolbar
                     sx={{
                         display: 'flex',
@@ -88,13 +75,24 @@ export default function MavMenu({ children }) {
                     }}
                 >
                     <IconButton onClick={toggleDrawer}>
-                        <ChevronLeftIcon />
+                        {
+                            open ? <ChevronLeftIcon /> : <MenuIcon />
+                        }
                     </IconButton>
                 </Toolbar>
                 <Divider />
                 <MainListItems />
-                
+
             </Drawer>
+            <AppBar position="absolute" sx={{ zIndex:'1000' }}>
+                <Toolbar sx={{ pr: '24px', }} >
+                    <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }} >
+                        <a href="/" style={{ color: 'white', textDecoration:'none' }}>Savings Tracker</a>
+                    </Typography>
+                    
+                    <LoginMenu />
+                </Toolbar>
+            </AppBar>
         </>
     );
 }

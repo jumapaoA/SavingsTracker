@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using savingsTacker.Data.Repositories.IRepositories;
 using savingsTacker.Models;
+using savingsTacker.Services;
 
 namespace savingsTacker.Areas.Identity.Pages.Account
 {
@@ -23,12 +24,14 @@ namespace savingsTacker.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly IActivityLogRepository _activityLogRepository;
+        private readonly ILogger<ForgotPasswordModel> _logger;
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IActivityLogRepository activityLog)
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IActivityLogRepository activityLog, ILogger<ForgotPasswordModel> logger)
         {
             _userManager = userManager;
             _emailSender = emailSender;
             _activityLogRepository = activityLog;
+            _logger = logger;
         }
 
         [BindProperty]
@@ -56,12 +59,15 @@ namespace savingsTacker.Areas.Identity.Pages.Account
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                _logger.LogInformation(code.ToString());
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     pageHandler: null,
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
+                EmailSender.TEMPLATE_ID = "d-24fc0ed597b74a47b58932d9f50e1c12";
+                EmailSender.EMAIL_LINK = $"{HtmlEncoder.Default.Encode(callbackUrl)}";
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",

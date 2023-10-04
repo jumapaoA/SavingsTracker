@@ -87,7 +87,7 @@ namespace savingsTacker.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+            StatusMessage = "";
             await LoadAsync(user);
             return Page();
         }

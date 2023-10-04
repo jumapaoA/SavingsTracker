@@ -5,19 +5,19 @@
 }
 
 <div class="center">
-    <h1>Registration form</h1>
+    <h1>Registration Form</h1>
     <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
         <div style="display:flex; margin-bottom: -25px">
             <div class="txt_field" style="max-width:155px">
                 <input asp-for="Input.FirstName" autocomplete="username" type="text" required>
                 <span asp-validation-for="Input.FirstName"></span>
-                <label asp-for="Input.FirstName">First name</label>
+                <label asp-for="Input.FirstName">First Name</label>
             </div>
             <div class="form-floating mb-3" style="width:4%"></div>
             <div class="txt_field" style="max-width:155px">
                 <input asp-for="Input.LastName" autocomplete="username" type="text" required>
                 <span asp-validation-for="Input.LastName" style="margin-bottom:-25px"></span>
-                <label asp-for="Input.LastName">Last name</label>
+                <label asp-for="Input.LastName">Last Name</label>
             </div>
         </div>
         <div class="txt_field">
@@ -59,23 +59,27 @@
             <div class="txt_field" style="max-width:155px">
                 <input asp-for="Input.ConfirmPassword" id="passwordField2" type="password" required>
                 <span asp-validation-for="Input.ConfirmPassword"></span>
-                <label asp-for="Input.ConfirmPassword">Confirm password</label>
+                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
             </div>
         </div>
-        <div style="display:flex">
-            <input type="checkbox" id="showPassword" style="width: 10px;" onclick="togglePasswordVisibility()">
-            <label style=" font-size: 12px; padding: 10px;">
-                Show password
+        <div style="display:flex" id="passwordToggle" onclick="togglePasswordVisibility()">
+            <input type="checkbox" id="showPassword" style="width: 13px;">
+            <label style=" font-size: 13px; color: #a6a6a6; padding: 10px;">
+                Show Password
             </label>
         </div>
 
-        <input type="submit" value="register">
+        <input type="submit" value="Register">
         <div class="signup_link">
             Already have an account? <a asp-page="./Login">Login</a>
         </div>
     </form>
 </div>
 <script>
+    document.getElementById('passwordToggle').addEventListener('click', function () {
+        var checkbox = document.getElementById('showPassword');
+        checkbox.checked = !checkbox.checked;
+    });
     function togglePasswordVisibility() {
         var passwordField = document.getElementById("passwordField");
         var passwordField2 = document.getElementById("passwordField2");

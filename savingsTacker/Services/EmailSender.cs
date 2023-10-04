@@ -19,6 +19,9 @@ namespace savingsTacker.Services
         public const string FROM_EMAIL = "ajumapao@fullscale.io";
         public const string FROM_EMAIL_GIVEN_NAME = "Bunny Bucks: Savings Tracker";
         private string _sendGridApiKey;
+        public static string TEMPLATE_ID { get; set; } = "";
+        public static string EMAIL_LINK { get; set; } = "";
+        public static string NAME { get; set; } = "";
 
         public AuthMessageSenderOptions Options { get; }
 
@@ -47,6 +50,13 @@ namespace savingsTacker.Services
             };
             newMessage.AddTo(new EmailAddress(toEmail));
             newMessage.SetClickTracking(false, false);
+            newMessage.SetTemplateId(TEMPLATE_ID);
+            newMessage.SetTemplateData(new
+            {
+                EmailLink = EMAIL_LINK,
+                name = NAME
+            });
+            
             var response = await client.SendEmailAsync(newMessage);
             _logger.LogInformation(response.IsSuccessStatusCode ? $"Email to {toEmail} queued successfully!"
                 : $"Failure Email to {toEmail}");
