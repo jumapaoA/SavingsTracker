@@ -9,13 +9,13 @@
     <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
         <div style="display:flex; margin-bottom: -25px">
             <div class="txt_field" style="max-width:155px">
-                <input asp-for="Input.FirstName" autocomplete="username" type="text" required>
+                <input asp-for="Input.FirstName" type="text" required>
                 <span asp-validation-for="Input.FirstName"></span>
                 <label asp-for="Input.FirstName">First Name</label>
             </div>
             <div class="form-floating mb-3" style="width:4%"></div>
             <div class="txt_field" style="max-width:155px">
-                <input asp-for="Input.LastName" autocomplete="username" type="text" required>
+                <input asp-for="Input.LastName" type="text" required>
                 <span asp-validation-for="Input.LastName" style="margin-bottom:-25px"></span>
                 <label asp-for="Input.LastName">Last Name</label>
             </div>
@@ -46,8 +46,6 @@
             </div>
             <span asp-validation-for="Input.Gender" style="text-decoration: none; color: red; font-size: 12px;"></span>
         </div>
-
-
         <div style="display:flex">
             <div class="txt_field" style="max-width:155px">
                 <input asp-for="Input.Password" id="passwordField" type="password" required>
@@ -76,6 +74,10 @@
     </form>
 </div>
 <script>
+    document.getElementById('showPassword').addEventListener('click', function () {
+        var checkbox = document.getElementById('showPassword');
+        checkbox.checked = !checkbox.checked;
+    });
     document.getElementById('passwordToggle').addEventListener('click', function () {
         var checkbox = document.getElementById('showPassword');
         checkbox.checked = !checkbox.checked;

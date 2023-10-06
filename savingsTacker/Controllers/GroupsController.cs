@@ -106,7 +106,7 @@ namespace savingsTacker.Controllers
             {
                 GroupName = Request.Form["GroupName"].ToString(),
                 GroupDescription = Request.Form["GroupDescription"].ToString(),
-                GroupCreator = Request.Form["GroupCreator"].ToString(),
+                GroupCreator = Request.Form["UserId"].ToString(),
                 DateCreated = currentDate,
                 IsActive = Boolean.Parse(Request.Form["IsActive"].ToString())
             };
@@ -114,21 +114,21 @@ namespace savingsTacker.Controllers
             _GroupDetails.AddGroup(Group);
             _Logger.LogInformation($"New group has been listed.");
 
-            AddActivity($"New group has been listed.");
+            AddActivity($"You just created a new group named {Group.GroupName}.");
 
             var Member = new GroupMember()
             {
                 GroupId = Group.Id,
-                UserId = Request.Form["GroupCreator"].ToString(),
+                UserId = Request.Form["UserId"].ToString(),
                 IsActive = true,
                 IsAdmin = true,
                 DateAdded = currentDate
             };
 
             _GroupMember.AddGroupMember(Member);
-            _Logger.LogInformation($"You are added to a group.");
+            _Logger.LogInformation($"You are now a member of group {Group.GroupName}.");
 
-            AddActivity("You are added to a group.");
+            AddActivity($"You are now a member of group {Group.GroupName}.");
             return Ok(Group);
         }
 
@@ -164,7 +164,7 @@ namespace savingsTacker.Controllers
             _GroupMember.AddGroupMember(Member);
             _Logger.LogInformation($"Added new member to group {Group.GroupName}.");
 
-            AddActivity($"Added new member to group {Group.GroupName}.");
+            AddActivity($"You are now a member of group {Group.GroupName}.");
 
             return Ok(Member);
         }
@@ -211,7 +211,7 @@ namespace savingsTacker.Controllers
             _GroupSavings.AddGroupSaving(GroupSaving);
             _Logger.LogInformation($"New group savings has been listed.");
 
-            AddActivity($"Added new group savings.");
+            AddActivity($"You just added a savings of {Savings.Amount} to the group {Group.GroupName}.");
 
             return Ok(GroupSaving);
         }
@@ -256,9 +256,13 @@ namespace savingsTacker.Controllers
                     Saving.IsActive = false;
                     _Savings.UpdateSavings(Saving);
                 }
-            }
 
-            AddActivity($"Updated the group details with an ID of {groupId}");
+                AddActivity($"You set the group {Group.GroupName} to inactive.");
+            }
+            else
+            {
+                AddActivity($"You updated the details of group {Group.GroupName}.");
+            }
 
             return Ok(Group);
         }
@@ -278,7 +282,7 @@ namespace savingsTacker.Controllers
             _GroupMember.UpdateGroupMember(Member);
             _Logger.LogInformation($"Member with ID {memberId} has been updated.");
 
-            AddActivity($"Add new admin to a group.");
+            AddActivity($"You added a new admin to a group.");
 
             return Ok(Member);
         }
@@ -299,6 +303,8 @@ namespace savingsTacker.Controllers
             _GroupMember.UpdateGroupMember(Member);
             _Logger.LogInformation($"Member with ID {memberId} has been updated.");
 
+            
+
             AddActivity($"Updated the group member status with an ID of {memberId}");
 
             return Ok(Member);
@@ -315,6 +321,9 @@ namespace savingsTacker.Controllers
             {
                 return NotFound();
             }
+
+            AddActivity($"You updated the savings with an amount of {Saving.Amount} to {Request.Form["Amount"].ToString()}" +
+                $" to group {group.GroupName}.");
 
             #region Create new savings under a group
 
@@ -357,8 +366,6 @@ namespace savingsTacker.Controllers
             #endregion
 
             _Logger.LogInformation($"You updated a group savings.");
-
-            AddActivity($"Added new group savings.");
 
             return Ok(GroupSaving);
         }

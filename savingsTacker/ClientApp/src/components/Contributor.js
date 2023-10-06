@@ -248,7 +248,7 @@ export function AddGroupDialog({ open, setOpen, userId }) {
         const form = new FormData();
         form.append('GroupName', name);
         form.append('GroupDescription', description);
-        form.append('GroupCreator', userId);
+        form.append('UserId', userId);
         form.append('IsActive', active);
 
         CreateGroup(form).then(
@@ -381,6 +381,7 @@ export function EditSavingsDialog({ open, setOpen, row, userId }) {
         form.append('GroupName', name);
         form.append('GroupDescription', description);
         form.append('IsActive', active);
+        form.append('UserId', userId);
 
         UpdateGroup(row.id, form).then(
             Swal.fire({

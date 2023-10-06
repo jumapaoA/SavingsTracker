@@ -116,11 +116,15 @@ namespace savingsTacker.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+            user.Gender = Input.Gender;
+            await _userManager.UpdateAsync(user);
+            
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated!";
 
-            return RedirectToPage();
+            return Page();
         }
     }
 }
