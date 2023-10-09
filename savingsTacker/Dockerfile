@@ -6,10 +6,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["savingsTacker/savingsTacker.csproj", "savingsTacker/"]
-RUN dotnet restore "savingsTacker/savingsTacker.csproj"
+COPY ["savingsTacker.csproj", "."]
+RUN dotnet restore "./savingsTacker.csproj"
 COPY . .
-WORKDIR "/src/savingsTacker"
+WORKDIR "/src/."
 RUN dotnet build "savingsTacker.csproj" -c Release -o /app/build
 
 FROM build AS publish

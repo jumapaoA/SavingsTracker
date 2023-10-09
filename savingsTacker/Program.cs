@@ -12,7 +12,9 @@ using savingsTacker.Services;
 using System.Configuration;
 using Microsoft.AspNetCore.Hosting;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
 IConfiguration Configuration = new ConfigurationBuilder()
     .SetBasePath(Environment.CurrentDirectory)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -97,5 +99,3 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.MapFallbackToFile("index.html");
-
-app.Run();

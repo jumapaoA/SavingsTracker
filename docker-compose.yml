@@ -1,25 +1,24 @@
 services:
-
   # backend
-  savingsTracker_Backend:
+  savingstracker_backend:
     container_name: savingstracker_backend
-    build: 
+    build:
       context: savingsTacker/
       dockerfile: Dockerfile
     ports:
       - 5432:80
-  
+
   # frontend
-  savingsTracker_Frontend:
-    container_name: savingstracker_frontend
-    build: 
-      context: savingsTacker/ClientApp/
-      dockerfile: Dockerfile
+  savingstracker_frontend:
+    container_name: savingstracker_backend
+    build:
+      context: .
+      dockerfile: savingsTacker/ClientApp/Dockerfile
     ports:
       - 5431:3000
-    environment: 
+    environment:
       - BROWSER=none
       - ASPNETCORE_HTTPS_PORT=443
       - ASPNETCORE_URLS="http://localhost:5432"
     depends_on:
-      - savingsTracker_Backend
+      - savingstracker_backend
