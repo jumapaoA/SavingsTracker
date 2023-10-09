@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fzuNxdG1T1dBGPrDoXuhz+Nwqsnlq5hLxjvOM3z4DgdOVxQ0M/dcSKTPux5k7wp28D6Gy+sfk1DtrmFVtUb3pg==",
+  "dgSpecHash": "/rqygWOr9jbU1K8YuhIaiFVnY3DdL2vPq997QVv/wHo24UddSmEqx5KoR5xS5OI+JBbiugA8zItHMEq6MlJhNg==",
   "success": true,
   "projectFilePath": "C:\\FAST TRACK TRANING\\ALYSSA CODING\\Side Projects\\SavingsTracker latest\\savingsTrackerTest\\savingsTrackerTest.csproj",
   "expectedPackageFiles": [
@@ -136,6 +136,7 @@
     "C:\\Users\\Full Scale\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\Full Scale\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.7.2\\microsoft.testplatform.objectmodel.17.7.2.nupkg.sha512",
     "C:\\Users\\Full Scale\\.nuget\\packages\\microsoft.testplatform.testhost\\17.7.2\\microsoft.testplatform.testhost.17.7.2.nupkg.sha512",
+    "C:\\Users\\Full Scale\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.4\\microsoft.visualstudio.azure.containers.tools.targets.1.19.4.nupkg.sha512",
     "C:\\Users\\Full Scale\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration\\7.0.9\\microsoft.visualstudio.web.codegeneration.7.0.9.nupkg.sha512",
     "C:\\Users\\Full Scale\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration.core\\7.0.9\\microsoft.visualstudio.web.codegeneration.core.7.0.9.nupkg.sha512",
     "C:\\Users\\Full Scale\\.nuget\\packages\\microsoft.visualstudio.web.codegeneration.design\\7.0.9\\microsoft.visualstudio.web.codegeneration.design.7.0.9.nupkg.sha512",

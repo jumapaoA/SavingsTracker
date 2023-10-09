@@ -23,7 +23,7 @@ IConfiguration Configuration = new ConfigurationBuilder()
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlite("Data Source=MyDb"));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
